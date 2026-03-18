@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ForkIt — Cook. Swipe. Conquer.</title>
+<meta name="description" content="ForkIt is the recipe discovery platform where you swipe through dishes from 20+ countries, vote for your favourites, and follow the creators behind them. No ads. No life stories. Just food." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0a08;--bg2:#131109;--bg3:#1a1710;
+  --fire:#f97316;--ember:#ef4444;--forest:#22c55e;
+  --cream:#f5f0e8;--muted:#6b6454;--border:rgba(255,255,255,.07);
+  --ff-head:'Playfair Display',Georgia,serif;
+  --ff-body:'DM Sans',sans-serif;
+  --ff-mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:var(--ff-body);font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
+a{color:inherit;text-decoration:none}
+
+/* cursor */
+#cursor{position:fixed;top:0;left:0;width:12px;height:12px;background:var(--fire);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,width .25s,height .25s;mix-blend-mode:screen}
+#cursor.big{width:48px;height:48px;background:rgba(249,115,22,.35)}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");background-size:200px;opacity:.6}
+
+/* reveals */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-50px);transition:opacity .7s ease,transform .7s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(50px);transition:opacity .7s ease,transform .7s ease}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+
+/* ticker */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);padding:12px 0;white-space:nowrap}
+.ticker-track{display:inline-flex;animation:tickerMove 32s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.ticker-item .dot{color:var(--fire);font-size:16px}
+@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:20px 6%;transition:background .3s,backdrop-filter .3s,padding .3s}
+nav.scrolled{background:rgba(12,10,8,.92);backdrop-filter:blur(20px);padding:14px 6%;border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--ff-head);font-size:26px;font-weight:900;letter-spacing:-1px}
+.nav-logo span{color:var(--fire)}
+.nav-links{display:flex;align-items:center;gap:34px}
+.nav-links a{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.5px;transition:color .2s}
+.nav-links a:hover{color:var(--cream)}
+.nav-cta{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:10px 24px;color:#fff;font-size:13px;font-weight:600;cursor:none;font-family:var(--ff-body);letter-spacing:.3px;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.9;transform:translateY(-1px)}
+
+/* hero */
+#hero{min-height:100vh;padding:100px 6% 80px;display:flex;align-items:center;justify-content:space-between;gap:60px;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px)}
+.orb1{width:600px;height:600px;background:rgba(249,115,22,.12);top:-100px;left:-200px}
+.orb2{width:400px;height:400px;background:rgba(239,68,68,.08);bottom:-50px;right:10%}
+.orb3{width:300px;height:300px;background:rgba(249,115,22,.06);top:40%;left:40%}
+
+.hero-left{flex:1;max-width:600px;position:relative;z-index:2}
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--fire);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp .6s ease both}
+.hero-kicker::before{content:'';width:6px;height:6px;background:var(--fire);border-radius:50%;animation:pulse 2s ease infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+.hero-headline{font-family:var(--ff-head);font-size:clamp(48px,6.5vw,92px);font-weight:900;line-height:.95;letter-spacing:-2px;animation:fadeUp .6s .1s ease both}
+.hero-headline .fire{color:var(--fire);font-style:italic;display:block}
+.hero-headline .dim{display:block;color:rgba(245,240,232,.3)}
+.hero-sub{font-size:17px;font-weight:300;color:rgba(245,240,232,.6);line-height:1.75;margin:28px 0 20px;max-width:460px;animation:fadeUp .6s .2s ease both}
+
+/* guest badge */
+.guest-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--forest);margin-bottom:32px;animation:fadeUp .6s .25s ease both}
+.guest-badge svg{width:13px;height:13px;fill:none;stroke:var(--forest);stroke-width:2}
+
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
+.btn-primary{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:16px 34px;color:#fff;font-size:15px;font-weight:600;cursor:none;font-family:var(--ff-body);box-shadow:0 8px 30px rgba(249,115,22,.3);transition:transform .2s,box-shadow .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(249,115,22,.4)}
+.btn-ghost{background:transparent;border:1px solid var(--border);border-radius:100px;padding:15px 30px;color:var(--cream);font-size:15px;font-weight:500;cursor:none;font-family:var(--ff-body);transition:border-color .2s,background .2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.04)}
+
+.hero-stats{display:flex;gap:36px;margin-top:52px;padding-top:52px;border-top:1px solid var(--border);animation:fadeUp .6s .4s ease both}
+.stat-num{font-family:var(--ff-head);font-size:34px;font-weight:900;line-height:1;color:var(--cream)}
+.stat-num span{color:var(--fire)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.5px;text-transform:uppercase}
+
+/* phone mockup */
+.hero-right{flex-shrink:0;position:relative;z-index:2;animation:fadeUp .6s .2s ease both}
+.phone-stack{position:relative;width:280px;height:540px}
+.phone-card{position:absolute;width:240px;border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1)}
+.pc1{bottom:0;left:20px;z-index:3;height:480px;animation:floatA 5s ease-in-out infinite}
+.pc2{top:0;right:0;z-index:2;height:460px;transform:rotate(6deg);opacity:.7;animation:floatB 5s 1.5s ease-in-out infinite}
+.pc3{top:40px;left:0;z-index:1;height:440px;transform:rotate(-5deg);opacity:.4;animation:floatC 5s 3s ease-in-out infinite}
+@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes floatB{0%,100%{transform:rotate(6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-8px)}}
+@keyframes floatC{0%,100%{transform:rotate(-5deg) translateY(0)}50%{transform:rotate(-5deg) translateY(-10px)}}
+
+.mock{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;position:relative}
+.mock1{background:linear-gradient(160deg,#c0392b,#e74c3c,#f39c12)}
+.mock2{background:linear-gradient(160deg,#7d3c98,#c0392b,#d35400)}
+.mock3{background:linear-gradient(160deg,#16a085,#27ae60,#2ecc71)}
+.mock-emoji{font-size:50px;text-align:center;margin-bottom:14px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))}
+.mock-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.25);backdrop-filter:blur(6px);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff;font-weight:600;margin-bottom:8px}
+.mock-title{font-family:var(--ff-head);font-size:19px;color:#fff;font-weight:700;margin-bottom:4px}
+.mock-desc{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.4}
+.mock-row{display:flex;justify-content:space-between;align-items:center}
+.mock-creator{display:flex;align-items:center;gap:6px}
+.mock-av{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff}
+.mock-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.mock-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
+.mb-x{background:rgba(239,68,68,.25);border:1.5px solid rgba(239,68,68,.5);color:#ef4444}
+.mb-h{background:rgba(34,197,94,.25);border:1.5px solid rgba(34,197,94,.5);color:#22c55e}
+
+.swipe-hint{position:absolute;bottom:55px;left:-90px;z-index:10;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:11px;color:var(--muted);white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:floatA 4s 2s ease-in-out infinite}
+.swipe-hint strong{color:var(--cream);display:block;font-size:13px;font-family:var(--ff-head)}
+.vote-badge{position:absolute;top:25px;right:-75px;z-index:10;background:linear-gradient(135deg,var(--fire),var(--ember));border-radius:12px;padding:10px 14px;font-size:11px;color:#fff;white-space:nowrap;box-shadow:0 8px 30px rgba(249,115,22,.3);animation:floatB 4s 1s ease-in-out infinite}
+.vote-badge strong{display:block;font-size:14px;font-family:var(--ff-head);font-weight:900}
+.curated-badge-float{position:absolute;top:50%;left:-100px;z-index:10;background:var(--bg3);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:9px 13px;font-size:11px;color:var(--forest);white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:floatC 5s 2.5s ease-in-out infinite}
+.curated-badge-float strong{display:block;font-size:12px;font-weight:700;color:#fff}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* section common */
+.section-kicker{font-size:11px;font-weight:600;color:var(--fire);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.section-headline{font-family:var(--ff-head);font-size:clamp(34px,4.5vw,62px);font-weight:900;line-height:1.05;letter-spacing:-1.5px}
+.section-headline em{color:var(--fire);font-style:italic}
+
+/* about */
+#about{padding:120px 6%;position:relative}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:80px}
+.about-text p{font-size:17px;font-weight:300;color:rgba(245,240,232,.65);line-height:1.8;margin-bottom:20px}
+.about-text p strong{color:var(--cream);font-weight:600}
+.about-pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:28px}
+.pill{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:600;color:rgba(245,240,232,.55);letter-spacing:.3px;transition:background .2s,border-color .2s,color .2s}
+.pill:hover{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:var(--fire)}
+
+.big-emoji-ring{position:relative;width:320px;height:320px;display:flex;align-items:center;justify-content:center}
+.ring-bg{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(249,115,22,.15);animation:spinRing 22s linear infinite}
+.ring-bg2{position:absolute;inset:30px;border-radius:50%;border:1px dashed rgba(249,115,22,.1);animation:spinRing 13s linear infinite reverse}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+.ring-center{width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(239,68,68,.1));display:flex;align-items:center;justify-content:center;font-size:60px;border:1px solid rgba(249,115,22,.2);position:relative;z-index:2;box-shadow:0 0 80px rgba(249,115,22,.15)}
+.orbit-emoji{position:absolute;font-size:26px;animation:orbitItem 18s linear infinite;transform-origin:160px center;top:50%;left:50%}
+.orbit-emoji:nth-child(2){animation-delay:-3s}
+.orbit-emoji:nth-child(3){animation-delay:-6s}
+.orbit-emoji:nth-child(4){animation-delay:-9s}
+.orbit-emoji:nth-child(5){animation-delay:-12s}
+.orbit-emoji:nth-child(6){animation-delay:-15s}
+@keyframes orbitItem{from{transform:rotate(0deg) translateX(130px) rotate(0deg)}to{transform:rotate(360deg) translateX(130px) rotate(-360deg)}}
+
+/* curated library section */
+#curated{padding:100px 6%;background:var(--bg2);position:relative;overflow:hidden}
+#curated::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--fire),transparent)}
+#curated::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--fire),transparent)}
+.curated-inner{max-width:1100px;margin:0 auto}
+.curated-header{text-align:center;max-width:600px;margin:0 auto 60px}
+.curated-header p{font-size:17px;color:rgba(245,240,232,.55);margin-top:18px;line-height:1.7;font-weight:300}
+
+.curated-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:48px}
+.curated-tile{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:20px 16px;text-align:center;transition:transform .25s,border-color .25s;cursor:default}
+.curated-tile:hover{transform:translateY(-4px);border-color:rgba(249,115,22,.3)}
+.curated-tile .flag{font-size:32px;margin-bottom:10px;display:block}
+.curated-tile .cname{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:3px}
+.curated-tile .ccount{font-size:11px;color:var(--muted)}
+.curated-tile .ctop{font-size:10px;color:var(--fire);font-weight:600;margin-top:8px}
+
+.curated-note{max-width:680px;margin:0 auto;text-align:center;background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.15);border-radius:16px;padding:24px 28px}
+.curated-note p{font-size:14px;color:rgba(245,240,232,.65);line-height:1.7}
+.curated-note strong{color:var(--cream)}
+
+/* how it works */
+#how{padding:120px 6%;position:relative}
+.how-header{text-align:center;max-width:580px;margin:0 auto 80px}
+.how-header p{font-size:17px;font-weight:300;color:rgba(245,240,232,.55);margin-top:20px;line-height:1.7}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.step-card{background:var(--bg3);padding:38px 26px;position:relative;overflow:hidden;transition:background .25s}
+.step-card:hover{background:rgba(249,115,22,.07)}
+.step-card:hover .step-icon{transform:scale(1.1)}
+.step-num{font-family:var(--ff-mono);font-size:11px;font-weight:500;color:var(--fire);letter-spacing:2px;margin-bottom:22px;opacity:.7}
+.step-icon{font-size:38px;margin-bottom:18px;display:block;transition:transform .3s}
+.step-title{font-family:var(--ff-head);font-size:21px;font-weight:700;margin-bottom:11px;line-height:1.2}
+.step-desc{font-size:14px;font-weight:300;color:rgba(245,240,232,.5);line-height:1.7}
+.step-conn{position:absolute;top:38px;right:-1px;width:2px;height:38px;background:linear-gradient(180deg,var(--fire),transparent)}
+
+/* features bento */
+#features{padding:120px 6%}
+.features-header{text-align:center;max-width:600px;margin:0 auto 80px}
+.features-header p{font-size:17px;font-weight:300;color:rgba(245,240,232,.5);margin-top:18px;line-height:1.7}
+.features-bento{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto;gap:14px}
+.feat{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:34px 30px;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+.feat:hover{border-color:rgba(249,115,22,.3);transform:translateY(-4px)}
+.feat::before{content:'';position:absolute;inset:0;border-radius:20px;background:radial-gradient(ellipse at 0% 0%,rgba(249,115,22,.08) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.feat:hover::before{opacity:1}
+.feat-wide{grid-column:span 2}
+.feat-icon{font-size:34px;margin-bottom:18px;display:block}
+.feat-title{font-family:var(--ff-head);font-size:23px;font-weight:700;margin-bottom:11px;line-height:1.2}
+.feat-desc{font-size:14px;font-weight:300;color:rgba(245,240,232,.5);line-height:1.7}
+.feat-tag{display:inline-block;margin-top:18px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--fire);letter-spacing:.5px}
+
+.feat-swipe-demo{margin-top:22px;display:flex;gap:9px}
+.mini-card{flex:1;border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;min-height:135px;position:relative;overflow:hidden}
+.mc1{background:linear-gradient(160deg,#c0392b,#f39c12);transform:rotate(-2deg)}
+.mc2{background:linear-gradient(160deg,#16a085,#2ecc71);transform:rotate(1deg) scale(1.05);box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:2}
+.mc3{background:linear-gradient(160deg,#7d3c98,#d35400);transform:rotate(2deg)}
+.mc-emoji{font-size:24px;text-align:center;margin-bottom:7px}
+.mc-name{font-family:var(--ff-head);font-size:12px;color:#fff;font-weight:700;line-height:1.2}
+.mc-country{font-size:10px;color:rgba(255,255,255,.7);margin-top:3px}
+
+.country-flags{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+.cflag{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:7px 11px;font-size:19px;transition:transform .2s,background .2s;cursor:default}
+.cflag:hover{transform:scale(1.1);background:rgba(249,115,22,.1)}
+
+.lb-preview{margin-top:22px;display:flex;flex-direction:column;gap:7px}
+.lb-row{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border-radius:9px;padding:8px 11px}
+.lb-rank{font-family:var(--ff-mono);font-size:10px;color:var(--muted);width:20px}
+.lb-av{width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--fire),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+.lb-name{flex:1;font-size:11px;font-weight:600}
+.lb-bar-wrap{width:55px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.lb-bar{height:100%;background:linear-gradient(90deg,var(--fire),var(--ember));border-radius:2px}
+.lb-votes{font-size:10px;color:var(--fire);font-weight:700}
+
+/* creator rewards */
+#rewards{padding:120px 6%;background:var(--bg2);position:relative;overflow:hidden}
+#rewards::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--fire),transparent)}
+.rewards-header{text-align:center;margin-bottom:70px}
+.rewards-header p{font-size:17px;color:rgba(245,240,232,.5);margin-top:18px;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.7;font-weight:300}
+.rewards-note{max-width:700px;margin:0 auto 60px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:16px;padding:20px 24px;text-align:center}
+.rewards-note p{font-size:13px;color:rgba(245,240,232,.65);line-height:1.7}
+.rewards-note strong{color:var(--forest)}
+
+.tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tier-card{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:30px 22px;position:relative;overflow:hidden;transition:transform .3s,border-color .3s}
+.tier-card:hover{transform:translateY(-6px);border-color:rgba(249,115,22,.2)}
+.tier-card.featured{background:linear-gradient(160deg,rgba(249,115,22,.12),rgba(239,68,68,.06));border-color:rgba(249,115,22,.35)}
+.tier-badge{font-size:34px;margin-bottom:14px;display:block}
+.tier-name{font-family:var(--ff-head);font-size:21px;font-weight:700;margin-bottom:5px}
+.tier-votes{font-family:var(--ff-mono);font-size:10px;color:var(--fire);letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;opacity:.8}
+.tier-perks{list-style:none}
+.tier-perks li{font-size:13px;color:rgba(245,240,232,.6);padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.tier-perks li:last-child{border:none}
+.tier-perks li::before{content:'→';color:var(--fire);flex-shrink:0;font-size:10px;margin-top:2px}
+
+.future-roadmap{margin-top:56px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:800px;margin-left:auto;margin-right:auto}
+.future-roadmap h3{font-family:var(--ff-head);font-size:22px;font-weight:700;margin-bottom:8px;text-align:center}
+.future-roadmap p{font-size:13px;color:rgba(245,240,232,.5);text-align:center;margin-bottom:28px;line-height:1.6}
+.roadmap-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rs{background:rgba(255,255,255,.04);border-radius:12px;padding:16px;text-align:center}
+.rs-num{font-family:var(--ff-mono);font-size:10px;color:var(--fire);letter-spacing:1px;margin-bottom:8px;opacity:.7}
+.rs-title{font-size:12px;font-weight:700;color:var(--cream);margin-bottom:5px;line-height:1.3}
+.rs-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* countries */
+#countries{padding:100px 6%}
+.countries-header{text-align:center;margin-bottom:56px}
+.countries-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.countries-scroll::-webkit-scrollbar{display:none}
+.country-tile{flex-shrink:0;width:155px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px 18px;text-align:center;transition:transform .25s,border-color .25s;cursor:default}
+.country-tile:hover{transform:translateY(-4px);border-color:rgba(249,115,22,.3)}
+.country-tile .flag{font-size:34px;margin-bottom:9px;display:block}
+.country-tile .name{font-size:13px;font-weight:600;margin-bottom:3px}
+.country-tile .count{font-size:11px;color:var(--muted)}
+.country-tile .top{font-size:10px;color:var(--fire);margin-top:7px;font-weight:600}
+
+/* testimonials */
+#social{padding:120px 6%;background:var(--bg2);position:relative;overflow:hidden}
+#social::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--fire),transparent)}
+.social-header{text-align:center;margin-bottom:70px}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tcard{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:26px}
+.tcard-quote{font-family:var(--ff-head);font-size:38px;color:var(--fire);line-height:.8;margin-bottom:11px;opacity:.4}
+.tcard-text{font-size:14px;color:rgba(245,240,232,.65);line-height:1.7;margin-bottom:18px;font-style:italic}
+.tcard-user{display:flex;align-items:center;gap:11px}
+.tcard-av{width:35px;height:35px;border-radius:50%;background:linear-gradient(135deg,var(--fire),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.tcard-name{font-size:13px;font-weight:600}
+.tcard-handle{font-size:11px;color:var(--muted)}
+.tcard-stars{font-size:11px;color:var(--fire);margin-top:3px;letter-spacing:1px}
+
+/* CTA */
+#cta{padding:140px 6%;text-align:center;position:relative;overflow:hidden}
+.cta-orb{position:absolute;width:700px;height:700px;border-radius:50%;background:rgba(249,115,22,.08);filter:blur(120px);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
+.cta-headline{font-family:var(--ff-head);font-size:clamp(42px,6.5vw,84px);font-weight:900;line-height:.95;letter-spacing:-2px;margin-bottom:22px;position:relative;z-index:2}
+.cta-headline em{color:var(--fire);font-style:italic;display:block}
+.cta-sub{font-size:17px;color:rgba(245,240,232,.5);font-weight:300;line-height:1.7;margin-bottom:16px;max-width:460px;margin-left:auto;margin-right:auto;position:relative;z-index:2}
+
+/* guest CTA callout */
+.cta-guest-note{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:100px;padding:8px 20px;font-size:13px;font-weight:600;color:var(--forest);margin-bottom:38px;position:relative;z-index:2}
+
+.cta-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:2}
+.store-btn{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 22px;transition:background .2s,border-color .2s,transform .2s;cursor:none}
+.store-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.store-icon{font-size:22px}
+.store-text-small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.store-text-big{font-size:14px;font-weight:600;color:var(--cream);margin-top:-1px}
+
+/* footer */
+footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:56px}
+.footer-logo{font-family:var(--ff-head);font-size:26px;font-weight:900;margin-bottom:12px}
+.footer-logo span{color:var(--fire)}
+.footer-tagline{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px}
+.footer-social{display:flex;gap:9px;margin-top:22px}
+.social-dot{width:35px;height:35px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .2s,border-color .2s;cursor:none}
+.social-dot:hover{background:rgba(249,115,22,.15);border-color:rgba(249,115,22,.3)}
+.footer-col-title{font-size:11px;font-weight:700;color:var(--cream);letter-spacing:1px;text-transform:uppercase;margin-bottom:18px}
+.footer-col a{display:block;font-size:13px;color:var(--muted);margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:var(--cream)}
+.footer-bottom{padding:22px 6% 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)}
+.footer-bottom a{color:var(--muted);margin-left:18px;transition:color .2s}
+.footer-bottom a:hover{color:var(--cream)}
+
+/* responsive */
+@media(max-width:1024px){
+  .steps-grid,.tiers-grid,.roadmap-steps{grid-template-columns:repeat(2,1fr)}
+  .features-bento{grid-template-columns:1fr 1fr}
+  .feat-wide{grid-column:span 1}
+  .testimonials-grid{grid-template-columns:repeat(2,1fr)}
+  .curated-grid{grid-template-columns:repeat(3,1fr)}
+  footer{grid-template-columns:1fr 1fr;gap:40px}
+}
+@media(max-width:768px){
+  #hero{flex-direction:column;text-align:center;padding-top:110px;padding-bottom:60px}
+  .hero-stats{justify-content:center}
+  .hero-actions,.about-pills{justify-content:center}
+  .hero-right{display:none}
+  .about-grid{grid-template-columns:1fr;gap:50px}
+  .steps-grid,.features-bento{grid-template-columns:1fr}
+  .tiers-grid,.roadmap-steps{grid-template-columns:1fr 1fr}
+  .curated-grid{grid-template-columns:repeat(2,1fr)}
+  .testimonials-grid{grid-template-columns:1fr}
+  footer{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Fork<span>It</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#curated">Recipes</a>
+    <a href="#how">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="#rewards">Creators</a>
+  </div>
+  <button class="nav-cta">🔥 Browse Free</button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="hero-left">
+    <div class="hero-kicker">🍴 300+ Curated Recipes Ready Now</div>
+    <h1 class="hero-headline">
+      Swipe<br>
+      <span class="fire">your next</span>
+      <span class="dim">obsession.</span>
+    </h1>
+    <p class="hero-sub">
+      ForkIt turns recipe discovery into a sport. Swipe through dishes from 20+ countries,
+      vote for flavours you love, watch the cooking video, and follow the creators behind them.
+      No ads. No life stories. No account required.
+    </p>
+
+    <div class="guest-badge">
+      <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      No account needed — browse everything for free
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn-primary">🔥 Start Browsing Free</button>
+      <button class="btn-ghost">Share Your Recipe ✨</button>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">300<span>+</span></div>
+        <div class="stat-label">Recipes Ready</div>
+      </div>
+      <div>
+        <div class="stat-num">20<span>+</span></div>
+        <div class="stat-label">Countries</div>
+      </div>
+      <div>
+        <div class="stat-num">0</div>
+        <div class="stat-label">Ads. Ever.</div>
+      </div>
+      <div>
+        <div class="stat-num">$<span>0</span></div>
+        <div class="stat-label">To Browse</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="swipe-hint"><strong>← Swipe to skip</strong>or save to cookbook</div>
+    <div class="vote-badge"><strong>❤️ 4,821</strong>votes this week</div>
+    <div class="curated-badge-float"><strong>🍴 ForkIt Curated</strong>hand-picked dishes</div>
+    <div class="phone-stack">
+      <div class="phone-card pc3">
+        <div class="mock mock3">
+          <div class="mock-emoji">🥞</div>
+          <div class="mock-badge">🇯🇵 Japan</div>
+          <div class="mock-title">Okonomiyaki</div>
+        </div>
+      </div>
+      <div class="phone-card pc2">
+        <div class="mock mock2">
+          <div class="mock-emoji">🥩</div>
+          <div class="mock-badge">🇮🇩 Indonesia</div>
+          <div class="mock-title">Rendang Padang</div>
+        </div>
+      </div>
+      <div class="phone-card pc1">
+        <div class="mock mock1">
+          <div class="mock-emoji">🌶️</div>
+          <div class="mock-badge">🇨🇳 China</div>
+          <div class="mock-title">Sichuan Mapo Tofu</div>
+          <div class="mock-desc">Silken tofu in blazing chili oil. The tingle is real.</div>
+          <div class="mock-row">
+            <div class="mock-creator">
+              <div class="mock-av">FC</div>
+              <span style="font-size:10px;color:rgba(255,255,255,.85)">🍴 ForkIt Curated</span>
+            </div>
+            <span style="font-size:12px;color:#fff;font-weight:700">❤️ 4,821</span>
+          </div>
+          <div class="mock-actions">
+            <div class="mock-btn mb-x">✕</div>
+            <div class="mock-btn mb-h">♥</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="dot">🌶️</span>Sichuan Mapo Tofu</span>
+    <span class="ticker-item"><span class="dot">🥩</span>Rendang Padang</span>
+    <span class="ticker-item"><span class="dot">🍳</span>Shakshuka</span>
+    <span class="ticker-item"><span class="dot">🥞</span>Okonomiyaki</span>
+    <span class="ticker-item"><span class="dot">🍜</span>Tonkotsu Ramen</span>
+    <span class="ticker-item"><span class="dot">🫔</span>Mole Negro</span>
+    <span class="ticker-item"><span class="dot">🫕</span>Lamb Tagine</span>
+    <span class="ticker-item"><span class="dot">🍝</span>Cacio e Pepe</span>
+    <span class="ticker-item"><span class="dot">🍛</span>Hyderabadi Biryani</span>
+    <span class="ticker-item"><span class="dot">🥘</span>Pad Kra Pao</span>
+    <span class="ticker-item"><span class="dot">🍲</span>Pho Bo</span>
+    <span class="ticker-item"><span class="dot">🧆</span>Falafel</span>
+    <span class="ticker-item"><span class="dot">🥗</span>Greek Salad</span>
+    <span class="ticker-item"><span class="dot">🌮</span>Tacos al Pastor</span>
+    <span class="ticker-item"><span class="dot">🌶️</span>Sichuan Mapo Tofu</span>
+    <span class="ticker-item"><span class="dot">🥩</span>Rendang Padang</span>
+    <span class="ticker-item"><span class="dot">🍳</span>Shakshuka</span>
+    <span class="ticker-item"><span class="dot">🥞</span>Okonomiyaki</span>
+    <span class="ticker-item"><span class="dot">🍜</span>Tonkotsu Ramen</span>
+    <span class="ticker-item"><span class="dot">🫔</span>Mole Negro</span>
+    <span class="ticker-item"><span class="dot">🫕</span>Lamb Tagine</span>
+    <span class="ticker-item"><span class="dot">🍝</span>Cacio e Pepe</span>
+    <span class="ticker-item"><span class="dot">🍛</span>Hyderabadi Biryani</span>
+    <span class="ticker-item"><span class="dot">🥘</span>Pad Kra Pao</span>
+    <span class="ticker-item"><span class="dot">🍲</span>Pho Bo</span>
+    <span class="ticker-item"><span class="dot">🧆</span>Falafel</span>
+    <span class="ticker-item"><span class="dot">🥗</span>Greek Salad</span>
+    <span class="ticker-item"><span class="dot">🌮</span>Tacos al Pastor</span>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="section-kicker reveal">What is ForkIt?</div>
+  <h2 class="section-headline reveal">Recipes were boring.<br><em>We fixed that.</em></h2>
+  <div class="about-grid">
+    <div class="about-text reveal-left">
+      <p>Most recipe sites are <strong>encyclopedias nobody asked for.</strong> You open one, get hit with a 3,000-word essay about someone's grandmother, scroll past 47 ads, and still can't tell if you actually want to cook it.</p>
+      <p>ForkIt is <strong>built differently.</strong> Swipe through recipe cards like you scroll music — fast, tactile, fun. Every card shows you country, cook time, difficulty, and creator upfront. Decide in a second.</p>
+      <p>When you find something worth making? <strong>Full ingredient checklist, step-by-step instructions, and an embedded video</strong> — all right there. No scrolling back to the top. No hunting for the recipe buried under a life story.</p>
+      <p>And the best part? <strong>You don't need an account to start.</strong> Browse everything, swipe everything, watch every video — completely free, no sign-up required. Create an account only when you want to save recipes or share your own.</p>
+      <div class="about-pills">
+        <span class="pill">Free to browse</span>
+        <span class="pill">No sign-up required</span>
+        <span class="pill">Swipe to discover</span>
+        <span class="pill">Vote for favourites</span>
+        <span class="pill">Follow creators</span>
+        <span class="pill">Explore by country</span>
+        <span class="pill">Share your recipe</span>
+        <span class="pill">Earn recognition</span>
+      </div>
+    </div>
+    <div class="about-visual reveal-right" style="display:flex;justify-content:center">
+      <div class="big-emoji-ring">
+        <div class="ring-bg"></div>
+        <div class="ring-bg2"></div>
+        <div class="ring-center">🍴</div>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🌶️</span>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🥩</span>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🍳</span>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🥞</span>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🍜</span>
+        <span class="orbit-emoji" style="top:50%;left:50%;transform-origin:160px center">🫕</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CURATED LIBRARY ═══ -->
+<section id="curated">
+  <div class="curated-inner">
+    <div class="curated-header">
+      <div class="section-kicker reveal">Ready on Day One</div>
+      <h2 class="section-headline reveal">300+ recipes.<br><em>20+ countries. Zero wait.</em></h2>
+      <p class="reveal">ForkIt launches with a hand-curated library of dishes from around the world — so there's always something to discover, from your very first swipe.</p>
+    </div>
+
+    <div class="curated-grid">
+      <div class="curated-tile reveal"><span class="flag">🇯🇵</span><div class="cname">Japan</div><div class="ccount">~20 recipes</div><div class="ctop">🏆 Teriyaki Chicken</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.05s"><span class="flag">🇨🇳</span><div class="cname">China</div><div class="ccount">~18 recipes</div><div class="ctop">🏆 Dim Sum</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.1s"><span class="flag">🇮🇳</span><div class="cname">India</div><div class="ccount">~22 recipes</div><div class="ctop">🏆 Chicken Tikka</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.15s"><span class="flag">🇲🇽</span><div class="cname">Mexico</div><div class="ccount">~16 recipes</div><div class="ctop">🏆 Tacos al Pastor</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.2s"><span class="flag">🇮🇹</span><div class="cname">Italy</div><div class="ccount">~19 recipes</div><div class="ctop">🏆 Pasta Carbonara</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.25s"><span class="flag">🇲🇦</span><div class="cname">Morocco</div><div class="ccount">~14 recipes</div><div class="ctop">🏆 Lamb Tagine</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.3s"><span class="flag">🇹🇭</span><div class="cname">Thailand</div><div class="ccount">~15 recipes</div><div class="ctop">🏆 Pad Thai</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.35s"><span class="flag">🇫🇷</span><div class="cname">France</div><div class="ccount">~17 recipes</div><div class="ctop">🏆 Beef Bourguignon</div></div>
+    </div>
+
+    <div class="curated-note reveal">
+      <p>These recipes are curated by the <strong>ForkIt team</strong> — each one includes a full ingredient list, step-by-step instructions, and many include an embedded YouTube tutorial video so you can watch the technique before you start cooking. <strong>More recipes are added every week.</strong> And as creators join and submit their own dishes, the library grows organically — every vote shapes what gets seen next.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="how-header">
+    <div class="section-kicker reveal">How It Works</div>
+    <h2 class="section-headline reveal">From swipe to <em>first bite</em></h2>
+    <p class="reveal">Four moments that turn recipe browsing from a chore into the best part of your day — no account needed for any of them.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card reveal">
+      <div class="step-num">01 / DISCOVER</div>
+      <span class="step-icon">🔥</span>
+      <div class="step-title">Swipe or get surprised</div>
+      <p class="step-desc">Swipe right to save a dish, left to skip. Hit the dice for a curveball. Country, cook time, difficulty, and creator upfront — every card, instantly readable.</p>
+      <div class="step-conn"></div>
+    </div>
+    <div class="step-card reveal" style="transition-delay:.1s">
+      <div class="step-num">02 / EXPLORE</div>
+      <span class="step-icon">🌍</span>
+      <div class="step-title">Browse by country & trend</div>
+      <p class="step-desc">Filter by cuisine or region. See what's winning votes in Italy this week, what creators are trending in Thailand, or what's blowing up globally right now.</p>
+      <div class="step-conn"></div>
+    </div>
+    <div class="step-card reveal" style="transition-delay:.2s">
+      <div class="step-num">03 / COOK</div>
+      <span class="step-icon">👨‍🍳</span>
+      <div class="step-title">Full recipe, zero friction</div>
+      <p class="step-desc">Ingredient checklist. Step-by-step instructions. Embedded YouTube or Facebook tutorial video. A progress bar that keeps you on track as you cook.</p>
+      <div class="step-conn"></div>
+    </div>
+    <div class="step-card reveal" style="transition-delay:.3s">
+      <div class="step-num">04 / SHARE</div>
+      <span class="step-icon">🚀</span>
+      <div class="step-title">Vote, follow & build your name</div>
+      <p class="step-desc">Vote for recipes you love. Share your cooking results on Instagram or TikTok. Submit your own recipes and start building a creator profile that grows with every vote.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section id="features">
+  <div class="features-header">
+    <div class="section-kicker reveal">Platform Features</div>
+    <h2 class="section-headline reveal">Everything a food obsessive <em>actually needs.</em></h2>
+    <p class="reveal">Built for the way real people find, cook, and share food. No fluff, no filler, no newsletter popup asking you to subscribe.</p>
+  </div>
+  <div class="features-bento">
+
+    <div class="feat feat-wide reveal">
+      <span class="feat-icon">🃏</span>
+      <div class="feat-title">Tinder-style recipe discovery</div>
+      <p class="feat-desc">The fastest way to find your next meal. Swipe right to save, left to pass. Drag or tap the buttons — both work equally well on mobile and desktop. A random dice button breaks decision paralysis.</p>
+      <div class="feat-swipe-demo">
+        <div class="mini-card mc1"><div class="mc-emoji">🥩</div><div class="mc-name">Rendang</div><div class="mc-country">🇮🇩 Indonesia</div></div>
+        <div class="mini-card mc2"><div class="mc-emoji">🌶️</div><div class="mc-name">Mapo Tofu</div><div class="mc-country">🇨🇳 China</div></div>
+        <div class="mini-card mc3"><div class="mc-emoji">🍳</div><div class="mc-name">Shakshuka</div><div class="mc-country">🇹🇳 Tunisia</div></div>
+      </div>
+      <span class="feat-tag">Core Feature</span>
+    </div>
+
+    <div class="feat reveal" style="transition-delay:.1s">
+      <span class="feat-icon">🌍</span>
+      <div class="feat-title">20-country cuisine explorer</div>
+      <p class="feat-desc">Filter by any country. See vote stats, trending dishes, and the most-loved recipe per region. Culinary tourism without the airfare.</p>
+      <div class="country-flags">
+        <span class="cflag">🇯🇵</span><span class="cflag">🇮🇳</span><span class="cflag">🇲🇽</span>
+        <span class="cflag">🇮🇹</span><span class="cflag">🇹🇭</span><span class="cflag">🇲🇦</span>
+        <span class="cflag">🇰🇷</span><span class="cflag">🇫🇷</span><span class="cflag">🇧🇷</span>
+        <span class="cflag">🇬🇷</span><span class="cflag">🇨🇳</span><span class="cflag">🇻🇳</span>
+      </div>
+      <span class="feat-tag">Explorer</span>
+    </div>
+
+    <div class="feat reveal" style="transition-delay:.2s">
+      <span class="feat-icon">🏆</span>
+      <div class="feat-title">Live leaderboard</div>
+      <p class="feat-desc">Ranked podium of top creators by vote count. Filter by month, country, or rising stars. Status is visible, stakes are real.</p>
+      <div class="lb-preview">
+        <div class="lb-row"><div class="lb-rank">#1</div><div class="lb-av">LL</div><div class="lb-name">@chef_liling 🇨🇳</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%"></div></div><div class="lb-votes">92.4k</div></div>
+        <div class="lb-row"><div class="lb-rank">#2</div><div class="lb-av">MM</div><div class="lb-name">@masakmasak 🇮🇩</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:80%"></div></div><div class="lb-votes">74.2k</div></div>
+        <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-av">NF</div><div class="lb-name">@nomadflavors 🌍</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:74%"></div></div><div class="lb-votes">68.9k</div></div>
+      </div>
+      <span class="feat-tag">Leaderboard</span>
+    </div>
+
+    <div class="feat reveal" style="transition-delay:.15s">
+      <span class="feat-icon">🎬</span>
+      <div class="feat-title">Embedded cooking videos</div>
+      <p class="feat-desc">Creators link their YouTube or Facebook tutorial directly inside the recipe. Watch the technique without leaving the page. A creator tip highlights the exact moment to pay attention to.</p>
+      <span class="feat-tag">Video Integration</span>
+    </div>
+
+    <div class="feat reveal" style="transition-delay:.25s">
+      <span class="feat-icon">✅</span>
+      <div class="feat-title">Interactive cooking mode</div>
+      <p class="feat-desc">Check off ingredients as you shop. Tick steps as you cook. A live progress bar tracks your session. Finish all steps and the app celebrates — with a one-tap share to your socials.</p>
+      <span class="feat-tag">Cooking Mode</span>
+    </div>
+
+    <div class="feat reveal" style="transition-delay:.3s">
+      <span class="feat-icon">✏️</span>
+      <div class="feat-title">Full creator editing suite</div>
+      <p class="feat-desc">Edit every part of your recipe inline — name, description, ingredients, steps, and video link — without leaving the recipe page. Add, remove, reorder, and refine.</p>
+      <span class="feat-tag">Creator Tools</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ CREATOR REWARDS ═══ -->
+<section id="rewards">
+  <div class="rewards-header">
+    <div class="section-kicker reveal">Creator Rewards</div>
+    <h2 class="section-headline reveal">Your recipes. <em>Your audience.</em><br>Your name in lights.</h2>
+    <p class="reveal">ForkIt turns your cooking knowledge into social capital. Every vote you earn is a step toward greater reach and real-world visibility — even without a penny changing hands.</p>
+  </div>
+
+  <div class="rewards-note reveal">
+    <p><strong>Honest about where we are:</strong> ForkIt is built by one person, zero budget. We can't pay creators yet. What we <em>can</em> do is build you a genuine audience, index your recipes on Google, shout you out on social media, and make warm introductions to brands when the time comes. The monetary roadmap is real — it just starts after the platform grows. <strong>Every tier is earnable from day one.</strong></p>
+  </div>
+
+  <div class="tiers-grid">
+    <div class="tier-card reveal">
+      <span class="tier-badge">🌱</span>
+      <div class="tier-name">Starter</div>
+      <div class="tier-votes">0 – 499 votes</div>
+      <ul class="tier-perks">
+        <li>ForkIt profile badge on your page</li>
+        <li>Public recipe page with your social links displayed</li>
+        <li>Recipes indexed on Google (free SEO for your work)</li>
+        <li>Visible in country explorer listings</li>
+      </ul>
+    </div>
+    <div class="tier-card reveal" style="transition-delay:.1s">
+      <span class="tier-badge">🔥</span>
+      <div class="tier-name">Hot Chef</div>
+      <div class="tier-votes">500 – 4,999 votes</div>
+      <ul class="tier-perks">
+        <li>Homepage feature slot rotation</li>
+        <li>Priority boost in swipe deck algorithm</li>
+        <li>Recipe analytics dashboard (views, saves, votes over time)</li>
+        <li>"Suggested Creator" shown on other profiles</li>
+      </ul>
+    </div>
+    <div class="tier-card featured reveal" style="transition-delay:.2s">
+      <span class="tier-badge">⭐</span>
+      <div class="tier-name">Star Creator</div>
+      <div class="tier-votes">5,000 – 24,999 votes</div>
+      <ul class="tier-perks">
+        <li>Monthly shoutout on ForkIt's Instagram & TikTok</li>
+        <li>Cross-promoted to our growing audience</li>
+        <li>Verified creator badge on all recipes</li>
+        <li>Early access to new features before public</li>
+        <li>"Top Creators" spotlight on the homepage</li>
+      </ul>
+    </div>
+    <div class="tier-card reveal" style="transition-delay:.3s">
+      <span class="tier-badge">🏆</span>
+      <div class="tier-name">Legend</div>
+      <div class="tier-votes">25,000+ votes</div>
+      <ul class="tier-perks">
+        <li>Warm intros to food brands who contact ForkIt</li>
+        <li>Press & media feature opportunities</li>
+        <li>Permanent Legend badge across the platform</li>
+        <li>Dedicated <code>/creators/[you]</code> spotlight page</li>
+        <li>Featured in ForkIt's press kit</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="future-roadmap reveal">
+    <h3>💰 Monetization Roadmap — Coming as We Grow</h3>
+    <p>We're building the platform first, the revenue model second. Here's the honest plan for how creators will earn real money once ForkIt has the audience to make it meaningful.</p>
+    <div class="roadmap-steps">
+      <div class="rs">
+        <div class="rs-num">STAGE 1 · NOW</div>
+        <div class="rs-title">Recognition Economy</div>
+        <div class="rs-desc">Tier badges, SEO portfolio, social shoutouts, leaderboard status. Real value, zero cash.</div>
+      </div>
+      <div class="rs">
+        <div class="rs-num">STAGE 2 · YEAR 1</div>
+        <div class="rs-title">Creator Tipping</div>
+        <div class="rs-desc">Optional "buy me a coffee" on creator profiles via Stripe. ForkIt takes 0% — you keep it all.</div>
+      </div>
+      <div class="rs">
+        <div class="rs-num">STAGE 3 · YEAR 2</div>
+        <div class="rs-title">Sponsored Placements</div>
+        <div class="rs-desc">Brands pay ForkIt for featured slots. 30% of that placement fee goes back to the recipe creator.</div>
+      </div>
+      <div class="rs">
+        <div class="rs-num">STAGE 4 · YEAR 2+</div>
+        <div class="rs-title">Creator Fund</div>
+        <div class="rs-desc">Platform revenue pooled monthly. Distributed to top creators by vote-weighted formula. Transparent. Public.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COUNTRIES ═══ -->
+<section id="countries">
+  <div class="countries-header">
+    <div class="section-kicker reveal">20 Cuisines from Day One</div>
+    <h2 class="section-headline reveal">The whole world is <em>on the menu.</em></h2>
+  </div>
+  <div class="countries-scroll reveal">
+    <div class="country-tile"><span class="flag">🇯🇵</span><div class="name">Japan</div><div class="count">~20 recipes</div><div class="top">🏆 Teriyaki</div></div>
+    <div class="country-tile"><span class="flag">🇮🇳</span><div class="name">India</div><div class="count">~22 recipes</div><div class="top">🏆 Chicken Tikka</div></div>
+    <div class="country-tile"><span class="flag">🇲🇽</span><div class="name">Mexico</div><div class="count">~16 recipes</div><div class="top">🏆 Tacos</div></div>
+    <div class="country-tile"><span class="flag">🇮🇹</span><div class="name">Italy</div><div class="count">~19 recipes</div><div class="top">🏆 Carbonara</div></div>
+    <div class="country-tile"><span class="flag">🇹🇭</span><div class="name">Thailand</div><div class="count">~15 recipes</div><div class="top">🏆 Pad Thai</div></div>
+    <div class="country-tile"><span class="flag">🇲🇦</span><div class="name">Morocco</div><div class="count">~14 recipes</div><div class="top">🏆 Tagine</div></div>
+    <div class="country-tile"><span class="flag">🇨🇳</span><div class="name">China</div><div class="count">~18 recipes</div><div class="top">🏆 Dim Sum</div></div>
+    <div class="country-tile"><span class="flag">🇫🇷</span><div class="name">France</div><div class="count">~17 recipes</div><div class="top">🏆 Coq au Vin</div></div>
+    <div class="country-tile"><span class="flag">🇬🇷</span><div class="name">Greece</div><div class="count">~12 recipes</div><div class="top">🏆 Moussaka</div></div>
+    <div class="country-tile"><span class="flag">🇻🇳</span><div class="name">Vietnam</div><div class="count">~13 recipes</div><div class="top">🏆 Pho Bo</div></div>
+    <div class="country-tile"><span class="flag">🇹🇳</span><div class="name">Tunisia</div><div class="count">~10 recipes</div><div class="top">🏆 Shakshuka</div></div>
+    <div class="country-tile"><span class="flag">🇹🇷</span><div class="name">Turkey</div><div class="count">~11 recipes</div><div class="top">🏆 Doner Kebab</div></div>
+    <div class="country-tile"><span class="flag">🇲🇾</span><div class="name">Malaysia</div><div class="count">~10 recipes</div><div class="top">🏆 Nasi Lemak</div></div>
+    <div class="country-tile"><span class="flag">🇪🇬</span><div class="name">Egypt</div><div class="count">~9 recipes</div><div class="top">🏆 Koshari</div></div>
+    <div class="country-tile"><span class="flag">🇯🇲</span><div class="name">Jamaica</div><div class="count">~8 recipes</div><div class="top">🏆 Jerk Chicken</div></div>
+    <div class="country-tile"><span class="flag">🇰🇪</span><div class="name">Kenya</div><div class="count">~7 recipes</div><div class="top">🏆 Nyama Choma</div></div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="social">
+  <div class="social-header">
+    <div class="section-kicker reveal">Community Stories</div>
+    <h2 class="section-headline reveal">Chefs, home cooks &amp; <em>total beginners</em> — all here.</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="tcard reveal">
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">I uploaded my mum's Rendang recipe, went viral in two weeks, and got a collaboration with a spice brand I've followed for years. ForkIt actually delivers on the creator promise — no cash needed.</p>
+      <div class="tcard-user">
+        <div class="tcard-av">MM</div>
+        <div>
+          <div class="tcard-name">@masakmasak</div>
+          <div class="tcard-handle">⭐ Star Creator · Indonesia</div>
+          <div class="tcard-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal" style="transition-delay:.1s">
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">I open ForkIt when I have no idea what to cook. Two swipes in and I'm already preheating the pan. The best part? I didn't even need to create an account to start swiping.</p>
+      <div class="tcard-user">
+        <div class="tcard-av">JT</div>
+        <div>
+          <div class="tcard-name">@jakethinks</div>
+          <div class="tcard-handle">🌱 Starter · Singapore</div>
+          <div class="tcard-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal" style="transition-delay:.2s">
+      <div class="tcard-quote">"</div>
+      <p class="tcard-text">The ingredient checklist sounds like a tiny thing but it changed how I prep. No more "did I add the cumin yet?" And the embedded YouTube video on every recipe is just chef's kiss.</p>
+      <div class="tcard-user">
+        <div class="tcard-av">SR</div>
+        <div>
+          <div class="tcard-name">@sara.recipes</div>
+          <div class="tcard-handle">🔥 Hot Chef · Philippines</div>
+          <div class="tcard-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta">
+  <div class="cta-orb"></div>
+  <div class="section-kicker reveal" style="display:inline-flex">Ready to ForkIt?</div>
+  <h2 class="cta-headline reveal">
+    Your next favourite meal<br>
+    <em>is one swipe away.</em>
+  </h2>
+  <p class="cta-sub reveal">
+    300+ recipes across 20+ countries. Free forever for explorers.
+    No account. No ads. No essay about someone's grandmother.
+  </p>
+  <div class="cta-guest-note reveal">
+    ✅ Browse, swipe &amp; cook — completely free, no sign-up
+  </div>
+  <div class="cta-actions reveal">
+    <button class="btn-primary" style="padding:18px 40px;font-size:16px">🔥 Start Browsing Free</button>
+    <a class="store-btn" href="#">
+      <div class="store-icon">🍎</div>
+      <div><div class="store-text-small">Download on the</div><div class="store-text-big">App Store</div></div>
+    </a>
+    <a class="store-btn" href="#">
+      <div class="store-icon">▶</div>
+      <div><div class="store-text-small">Coming soon to</div><div class="store-text-big">Google Play</div></div>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div>
+    <div class="footer-logo">Fork<span>It</span></div>
+    <p class="footer-tagline">The recipe platform that turns cooking into a discovery sport. Cook. Swipe. Conquer.</p>
+    <div class="footer-social">
+      <div class="social-dot">📸</div>
+      <div class="social-dot">🎵</div>
+      <div class="social-dot">𝕏</div>
+      <div class="social-dot">▶</div>
+    </div>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Product</div>
+    <a href="#how">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="#curated">Curated Library</a>
+    <a href="#">Web App</a>
+    <a href="#">Changelog</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Creators</div>
+    <a href="#rewards">Reward Tiers</a>
+    <a href="#">Creator Guidelines</a>
+    <a href="#">Submit a Recipe</a>
+    <a href="#">Creator Dashboard</a>
+    <a href="#">Monetization Roadmap</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Company</div>
+    <a href="#">About Us</a>
+    <a href="#">Blog</a>
+    <a href="#">Press Kit</a>
+    <a href="#">Contact</a>
+    <a href="#">Privacy Policy</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2026 ForkIt. All rights reserved. Built by one person, for everyone.</span>
+  <div>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Cookies</a>
+  </div>
+</div>
+
+<script>
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .pill, .cflag, .country-tile, .social-dot, .store-btn, .curated-tile, .tier-card').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
