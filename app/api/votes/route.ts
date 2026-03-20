@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       // Get current author profile
       const { data: authorProfile } = await supabase
         .from('profiles')
-        .select('id, reward_tier, total_votes, display_name')
+        .select('id, reward_tier, total_votes, display_name, push_token')
         .eq('id', updatedRecipe.author_id)
         .single();
 
@@ -120,6 +120,21 @@ export async function POST(request: NextRequest) {
             voter_username: voterProfile?.username ?? 'someone',
           },
         });
+
+        // Send Expo push notification
+        if (authorProfile.push_token) {
+          fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: authorProfile.push_token,
+              title: '❤️ New vote!',
+              body: `@${voterProfile?.username ?? 'someone'} voted for "${recipe.title}"`,
+              data: { screen: 'recipe', recipeId: recipe.id },
+              sound: 'default',
+            }),
+          }).catch(() => {}); // fire and forget
+        }
 
         // Tier upgrade notification + email
         if (tierChanged) {

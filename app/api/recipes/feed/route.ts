@@ -22,13 +22,18 @@ export async function GET(request: NextRequest) {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+  const country = searchParams.get('country') ?? '';
 
   const supabase = await createClient();
 
   // Fetch a larger pool (3× limit) so we can shuffle and still have variety.
   // The pool is ordered by votes to stay weighted toward popular recipes,
   // but the final result is shuffled so the sequence differs every session.
-  const poolSize = Math.min(limit * 3, 150);
+  // When a country filter is active, use a smaller multiplier — the pool is
+  // already narrowed and we want to surface all available recipes.
+  const poolSize = country
+    ? Math.min(limit * 5, 300)
+    : Math.min(limit * 3, 150);
 
   let query = supabase
     .from('recipes')
@@ -39,6 +44,10 @@ export async function GET(request: NextRequest) {
     .order('total_votes', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(poolSize);
+
+  if (country) {
+    query = query.eq('country_code', country);
+  }
 
   if (excludeIds.length > 0) {
     query = query.not('id', 'in', `(${excludeIds.join(',')})`);

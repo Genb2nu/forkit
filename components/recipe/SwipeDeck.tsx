@@ -12,7 +12,11 @@ import { SkeletonCard } from '@/components/ui/Skeleton';
 import { startNavigationProgress } from '@/components/ui/NavigationProgress';
 import type { Recipe } from '@/types';
 
-export function SwipeDeck() {
+interface SwipeDeckProps {
+  country?: string;
+}
+
+export function SwipeDeck({ country }: SwipeDeckProps) {
   const router = useRouter();
   const { user } = useAuthStore();
   const { seenIds, savedIds, addSeen, addSaved, reset } = useSwipeStore();
@@ -28,11 +32,12 @@ export function SwipeDeck() {
     async (excludeIds: Set<string>) => {
       const excludeParam =
         excludeIds.size > 0 ? `&exclude=${Array.from(excludeIds).join(',')}` : '';
-      const res = await fetch(`/api/recipes/feed?limit=20${excludeParam}`);
+      const countryParam = country ? `&country=${encodeURIComponent(country)}` : '';
+      const res = await fetch(`/api/recipes/feed?limit=20${excludeParam}${countryParam}`);
       if (!res.ok) return { recipes: [], hasMore: false };
       return res.json() as Promise<{ recipes: Recipe[]; hasMore: boolean }>;
     },
-    []
+    [country]
   );
 
   // Initial load

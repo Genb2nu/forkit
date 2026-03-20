@@ -5,6 +5,28 @@ const PROTECTED = ['/create', '/saved'];
 const PROFILE_EDIT = /^\/profile\/[^/]+\/edit/;
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Handle CORS for API routes (mobile app on different port)
+  if (pathname.startsWith('/api/')) {
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+    const response = NextResponse.next({ request });
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return response;
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -33,7 +55,6 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const needsAuth =
     PROTECTED.some((p) => pathname.startsWith(p)) ||
     PROFILE_EDIT.test(pathname);
@@ -50,12 +71,13 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // API routes (for CORS preflight handling)
+    '/api/:path*',
     /*
-     * Match all paths except static assets and API routes:
+     * Match all paths except static assets:
      * - _next/static, _next/image, favicon.ico
-     * - api routes (handled directly by route handlers)
      * - static files (svg, png, jpg, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

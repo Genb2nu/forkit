@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ForkIt — Cook. Swipe. Conquer.</title>
 <meta name="description" content="ForkIt is the recipe discovery platform where you swipe through dishes from 20+ countries, vote for your favourites, and follow the creators behind them. No ads. No life stories. Just food." />
+<!-- [1] OG + Twitter meta tags -->
+<meta property="og:title" content="ForkIt — Cook. Swipe. Conquer." />
+<meta property="og:description" content="Swipe through 300+ recipes from 20+ countries. No ads. No account needed. Just food." />
+<meta property="og:image" content="https://forkit-ashy.vercel.app/og-image.png" />
+<meta property="og:url" content="https://forkit-ashy.vercel.app/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="ForkIt" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@forkitapp" />
+<meta name="twitter:title" content="ForkIt — Cook. Swipe. Conquer." />
+<meta name="twitter:description" content="Swipe through 300+ recipes from 20+ countries. No ads. No account needed. Just food." />
+<meta name="twitter:image" content="https://forkit-ashy.vercel.app/og-image.png" />
+<link rel="canonical" href="https://forkit-ashy.vercel.app/" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -57,6 +70,16 @@ nav.scrolled{background:rgba(12,10,8,.92);backdrop-filter:blur(20px);padding:14p
 .nav-cta{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:10px 24px;color:#fff;font-size:13px;font-weight:600;cursor:none;font-family:var(--ff-body);letter-spacing:.3px;transition:opacity .2s,transform .2s}
 .nav-cta:hover{opacity:.9;transform:translateY(-1px)}
 
+/* [2] mobile hamburger nav */
+.nav-burger{display:none;background:none;border:none;color:var(--cream);font-size:24px;cursor:none;padding:6px;font-family:var(--ff-body);line-height:1}
+.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(12,10,8,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 6% 20px;flex-direction:column;gap:0}
+.nav-mobile.open{display:flex}
+.nav-mobile a{display:block;width:100%;padding:14px 0;font-size:14px;font-weight:500;color:var(--muted);border-bottom:1px solid var(--border);transition:color .2s}
+.nav-mobile a:last-child{border-bottom:none}
+.nav-mobile a:hover{color:var(--cream)}
+.nav-mobile .nav-mobile-sep{height:1px;background:var(--border);margin:8px 0}
+.nav-mobile .nav-mobile-cta{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:12px 24px;color:#fff;font-size:14px;font-weight:600;cursor:none;font-family:var(--ff-body);letter-spacing:.3px;text-align:center;margin-top:12px;display:block;width:100%}
+
 /* hero */
 #hero{min-height:100vh;padding:100px 6% 80px;display:flex;align-items:center;justify-content:space-between;gap:60px;position:relative;overflow:hidden}
 .orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px)}
@@ -83,6 +106,28 @@ nav.scrolled{background:rgba(12,10,8,.92);backdrop-filter:blur(20px);padding:14p
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(249,115,22,.4)}
 .btn-ghost{background:transparent;border:1px solid var(--border);border-radius:100px;padding:15px 30px;color:var(--cream);font-size:15px;font-weight:500;cursor:none;font-family:var(--ff-body);transition:border-color .2s,background .2s}
 .btn-ghost:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.04)}
+
+/* [3] hero email capture */
+.hero-email{margin-top:28px;animation:fadeUp .6s .35s ease both}
+.hero-email-form{display:flex;gap:10px;max-width:420px}
+.hero-email-form input[type="email"]{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:12px 20px;color:var(--cream);font-family:var(--ff-body);font-size:14px;outline:none;transition:border-color .2s}
+.hero-email-form input[type="email"]::placeholder{color:var(--muted)}
+.hero-email-form input[type="email"]:focus{border-color:rgba(249,115,22,.4)}
+.hero-email-form button{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:12px 22px;color:#fff;font-size:13px;font-weight:600;cursor:none;font-family:var(--ff-body);white-space:nowrap;transition:opacity .2s,transform .2s}
+.hero-email-form button:hover{opacity:.9;transform:translateY(-1px)}
+.hero-email-note{font-size:12px;color:var(--muted);margin-top:10px}
+.hero-email-success{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--forest);padding:12px 0}
+
+/* [7] mobile hero card */
+.hero-mobile-card{display:none;border-radius:20px;padding:20px;background:linear-gradient(160deg,#c0392b,#e74c3c,#f39c12);margin-top:28px;animation:fadeUp .6s .35s ease both;border:1px solid rgba(255,255,255,.1)}
+.hero-mobile-card .hmc-emoji{font-size:50px;text-align:center;margin-bottom:10px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))}
+.hero-mobile-card .hmc-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.25);backdrop-filter:blur(6px);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff;font-weight:600;margin-bottom:8px}
+.hero-mobile-card .hmc-title{font-family:var(--ff-head);font-size:19px;color:#fff;font-weight:700;margin-bottom:4px}
+.hero-mobile-card .hmc-desc{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.4}
+.hero-mobile-card .hmc-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.hero-mobile-card .hmc-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:none;cursor:none}
+.hero-mobile-card .hmc-btn-x{background:rgba(239,68,68,.25);border:1.5px solid rgba(239,68,68,.5);color:#ef4444}
+.hero-mobile-card .hmc-btn-h{background:rgba(34,197,94,.25);border:1.5px solid rgba(34,197,94,.5);color:#22c55e}
 
 .hero-stats{display:flex;gap:36px;margin-top:52px;padding-top:52px;border-top:1px solid var(--border);animation:fadeUp .6s .4s ease both}
 .stat-num{font-family:var(--ff-head);font-size:34px;font-weight:900;line-height:1;color:var(--cream)}
@@ -271,13 +316,28 @@ nav.scrolled{background:rgba(12,10,8,.92);backdrop-filter:blur(20px);padding:14p
 .social-header{text-align:center;margin-bottom:70px}
 .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .tcard{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:26px}
-.tcard-quote{font-family:var(--ff-head);font-size:38px;color:var(--fire);line-height:.8;margin-bottom:11px;opacity:.4}
+/* [12] updated tcard-quote opacity from .4 to .6 */
+.tcard-quote{font-family:var(--ff-head);font-size:38px;color:var(--fire);line-height:.8;margin-bottom:11px;opacity:.6}
 .tcard-text{font-size:14px;color:rgba(245,240,232,.65);line-height:1.7;margin-bottom:18px;font-style:italic}
 .tcard-user{display:flex;align-items:center;gap:11px}
 .tcard-av{width:35px;height:35px;border-radius:50%;background:linear-gradient(135deg,var(--fire),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
 .tcard-name{font-size:13px;font-weight:600}
 .tcard-handle{font-size:11px;color:var(--muted)}
 .tcard-stars{font-size:11px;color:var(--fire);margin-top:3px;letter-spacing:1px}
+
+/* [6] FAQ section */
+#faq{padding:120px 6%;position:relative}
+.faq-header{text-align:center;max-width:600px;margin:0 auto 60px}
+.faq-list{max-width:740px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:first-child{border-top:1px solid var(--border)}
+.faq-question{display:flex;align-items:center;justify-content:space-between;width:100%;padding:22px 0;background:none;border:none;color:var(--cream);font-family:var(--ff-body);font-size:15px;font-weight:600;cursor:none;text-align:left;line-height:1.4;gap:16px}
+.faq-question:hover{color:var(--fire)}
+.faq-toggle{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--fire);transition:transform .2s,background .2s}
+.faq-item.open .faq-toggle{transform:rotate(45deg);background:rgba(249,115,22,.2)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-answer{max-height:300px}
+.faq-answer p{font-size:14px;font-weight:300;color:rgba(245,240,232,.6);line-height:1.8;padding:0 0 22px}
 
 /* CTA */
 #cta{padding:140px 6%;text-align:center;position:relative;overflow:hidden}
@@ -290,6 +350,8 @@ nav.scrolled{background:rgba(12,10,8,.92);backdrop-filter:blur(20px);padding:14p
 .cta-guest-note{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:100px;padding:8px 20px;font-size:13px;font-weight:600;color:var(--forest);margin-bottom:38px;position:relative;z-index:2}
 
 .cta-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:2}
+/* [5] cta-web-note */
+.cta-web-note{font-size:14px;color:var(--muted);margin-top:16px;text-align:center;position:relative;z-index:2}
 .store-btn{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:13px 22px;transition:background .2s,border-color .2s,transform .2s;cursor:none}
 .store-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
 .store-icon{font-size:22px}
@@ -311,6 +373,28 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
 .footer-bottom a{color:var(--muted);margin-left:18px;transition:color .2s}
 .footer-bottom a:hover{color:var(--cream)}
 
+/* [3] footer email */
+.footer-email-desc{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.footer-email-form{display:flex;gap:6px}
+.footer-email-form input[type="email"]{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:9px 14px;color:var(--cream);font-family:var(--ff-body);font-size:12px;outline:none;min-width:0;transition:border-color .2s}
+.footer-email-form input[type="email"]::placeholder{color:var(--muted)}
+.footer-email-form input[type="email"]:focus{border-color:rgba(249,115,22,.4)}
+.footer-email-form button{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:9px 16px;color:#fff;font-size:14px;font-weight:600;cursor:none;font-family:var(--ff-body);flex-shrink:0;transition:opacity .2s}
+.footer-email-form button:hover{opacity:.9}
+.footer-email-success{font-size:12px;font-weight:600;color:var(--forest);padding:9px 0}
+
+/* [10] scroll progress bar */
+#scrollProgress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--fire),var(--ember));z-index:9998;width:0;pointer-events:none;transition:width .05s linear}
+
+/* [14] sticky mobile browse button */
+.sticky-cta{display:none;position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:100px;padding:14px 24px;color:#fff;font-size:14px;font-weight:600;cursor:none;font-family:var(--ff-body);box-shadow:0 8px 30px rgba(249,115,22,.4);z-index:800;opacity:0;transform:translateY(20px);transition:opacity .3s,transform .3s;pointer-events:none}
+.sticky-cta.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+
+/* [13] reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
 /* responsive */
 @media(max-width:1024px){
   .steps-grid,.tiers-grid,.roadmap-steps{grid-template-columns:repeat(2,1fr)}
@@ -325,6 +409,9 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
   .hero-stats{justify-content:center}
   .hero-actions,.about-pills{justify-content:center}
   .hero-right{display:none}
+  .hero-mobile-card{display:block}
+  .hero-email-form{max-width:100%;flex-direction:column}
+  .hero-email-form input[type="email"]{width:100%}
   .about-grid{grid-template-columns:1fr;gap:50px}
   .steps-grid,.features-bento{grid-template-columns:1fr}
   .tiers-grid,.roadmap-steps{grid-template-columns:1fr 1fr}
@@ -332,12 +419,17 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
   .testimonials-grid{grid-template-columns:1fr}
   footer{grid-template-columns:1fr}
   .nav-links{display:none}
+  .nav-burger{display:block}
+  .nav-cta{display:none}
+  .sticky-cta{display:block}
 }
 </style>
 </head>
 <body>
 
 <div id="cursor"></div>
+<!-- [10] scroll progress bar -->
+<div id="scrollProgress"></div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -349,7 +441,20 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
     <a href="#features">Features</a>
     <a href="#rewards">Creators</a>
   </div>
-  <button class="nav-cta">🔥 Browse Free</button>
+  <!-- [2] hamburger button -->
+  <button class="nav-burger" id="navBurger" aria-label="Toggle navigation">☰</button>
+  <!-- [4] aria-label on nav-cta -->
+  <button class="nav-cta" aria-label="Browse recipes for free">🔥 Browse Free</button>
+  <!-- [2] mobile nav dropdown -->
+  <div class="nav-mobile" id="navMobile">
+    <a href="#about">About</a>
+    <a href="#curated">Recipes</a>
+    <a href="#how">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="#rewards">Creators</a>
+    <div class="nav-mobile-sep"></div>
+    <a href="#" class="nav-mobile-cta" aria-label="Browse recipes for free">🔥 Browse Free</a>
+  </div>
 </nav>
 
 <!-- ═══ HERO ═══ -->
@@ -377,8 +482,30 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
     </div>
 
     <div class="hero-actions">
-      <button class="btn-primary">🔥 Start Browsing Free</button>
-      <button class="btn-ghost">Share Your Recipe ✨</button>
+      <!-- [4] aria-labels on hero buttons, [11] fix secondary CTA -->
+      <button class="btn-primary" aria-label="Start browsing recipes for free">🔥 Start Browsing Free</button>
+      <a href="#rewards" class="btn-ghost" aria-label="Learn about creator rewards">I'm a food creator →</a>
+    </div>
+
+    <!-- [3] hero email capture -->
+    <div class="hero-email" id="heroEmail">
+      <form class="hero-email-form" id="heroEmailForm">
+        <input type="email" placeholder="Your email address" required />
+        <button type="submit">Notify Me →</button>
+      </form>
+      <p class="hero-email-note">No spam. Unsubscribe anytime. Join 142+ food lovers.</p>
+    </div>
+
+    <!-- [7] mobile hero card -->
+    <div class="hero-mobile-card">
+      <div class="hmc-emoji">🌶️</div>
+      <div class="hmc-badge">🇨🇳 China</div>
+      <div class="hmc-title">Sichuan Mapo Tofu</div>
+      <div class="hmc-desc">Silken tofu in blazing chili oil. The tingle is real.</div>
+      <div class="hmc-actions">
+        <button class="hmc-btn hmc-btn-x" aria-label="Skip this recipe">✕</button>
+        <button class="hmc-btn hmc-btn-h" aria-label="Save this recipe">♥</button>
+      </div>
     </div>
 
     <div class="hero-stats">
@@ -434,8 +561,9 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
             <span style="font-size:12px;color:#fff;font-weight:700">❤️ 4,821</span>
           </div>
           <div class="mock-actions">
-            <div class="mock-btn mb-x">✕</div>
-            <div class="mock-btn mb-h">♥</div>
+            <!-- [4] aria-labels on mock buttons -->
+            <div class="mock-btn mb-x" aria-label="Skip this recipe">✕</div>
+            <div class="mock-btn mb-h" aria-label="Save this recipe">♥</div>
           </div>
         </div>
       </div>
@@ -523,15 +651,16 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
       <p class="reveal">ForkIt launches with a hand-curated library of dishes from around the world — so there's always something to discover, from your very first swipe.</p>
     </div>
 
+    <!-- [8] updated recipe counts -->
     <div class="curated-grid">
-      <div class="curated-tile reveal"><span class="flag">🇯🇵</span><div class="cname">Japan</div><div class="ccount">~20 recipes</div><div class="ctop">🏆 Teriyaki Chicken</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.05s"><span class="flag">🇨🇳</span><div class="cname">China</div><div class="ccount">~18 recipes</div><div class="ctop">🏆 Dim Sum</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.1s"><span class="flag">🇮🇳</span><div class="cname">India</div><div class="ccount">~22 recipes</div><div class="ctop">🏆 Chicken Tikka</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.15s"><span class="flag">🇲🇽</span><div class="cname">Mexico</div><div class="ccount">~16 recipes</div><div class="ctop">🏆 Tacos al Pastor</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.2s"><span class="flag">🇮🇹</span><div class="cname">Italy</div><div class="ccount">~19 recipes</div><div class="ctop">🏆 Pasta Carbonara</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.25s"><span class="flag">🇲🇦</span><div class="cname">Morocco</div><div class="ccount">~14 recipes</div><div class="ctop">🏆 Lamb Tagine</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.3s"><span class="flag">🇹🇭</span><div class="cname">Thailand</div><div class="ccount">~15 recipes</div><div class="ctop">🏆 Pad Thai</div></div>
-      <div class="curated-tile reveal" style="transition-delay:.35s"><span class="flag">🇫🇷</span><div class="cname">France</div><div class="ccount">~17 recipes</div><div class="ctop">🏆 Beef Bourguignon</div></div>
+      <div class="curated-tile reveal"><span class="flag">🇯🇵</span><div class="cname">Japan</div><div class="ccount">15+ recipes</div><div class="ctop">🏆 Teriyaki Chicken</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.05s"><span class="flag">🇨🇳</span><div class="cname">China</div><div class="ccount">12+ recipes</div><div class="ctop">🏆 Dim Sum</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.1s"><span class="flag">🇮🇳</span><div class="cname">India</div><div class="ccount">14+ recipes</div><div class="ctop">🏆 Chicken Tikka</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.15s"><span class="flag">🇲🇽</span><div class="cname">Mexico</div><div class="ccount">10+ recipes</div><div class="ctop">🏆 Tacos al Pastor</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.2s"><span class="flag">🇮🇹</span><div class="cname">Italy</div><div class="ccount">12+ recipes</div><div class="ctop">🏆 Pasta Carbonara</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.25s"><span class="flag">🇲🇦</span><div class="cname">Morocco</div><div class="ccount">8+ recipes</div><div class="ctop">🏆 Lamb Tagine</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.3s"><span class="flag">🇹🇭</span><div class="cname">Thailand</div><div class="ccount">10+ recipes</div><div class="ctop">🏆 Pad Thai</div></div>
+      <div class="curated-tile reveal" style="transition-delay:.35s"><span class="flag">🇫🇷</span><div class="cname">France</div><div class="ccount">10+ recipes</div><div class="ctop">🏆 Beef Bourguignon</div></div>
     </div>
 
     <div class="curated-note reveal">
@@ -558,7 +687,7 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
     <div class="step-card reveal" style="transition-delay:.1s">
       <div class="step-num">02 / EXPLORE</div>
       <span class="step-icon">🌍</span>
-      <div class="step-title">Browse by country & trend</div>
+      <div class="step-title">Browse by country &amp; trend</div>
       <p class="step-desc">Filter by cuisine or region. See what's winning votes in Italy this week, what creators are trending in Thailand, or what's blowing up globally right now.</p>
       <div class="step-conn"></div>
     </div>
@@ -572,7 +701,7 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
     <div class="step-card reveal" style="transition-delay:.3s">
       <div class="step-num">04 / SHARE</div>
       <span class="step-icon">🚀</span>
-      <div class="step-title">Vote, follow & build your name</div>
+      <div class="step-title">Vote, follow &amp; build your name</div>
       <p class="step-desc">Vote for recipes you love. Share your cooking results on Instagram or TikTok. Submit your own recipes and start building a creator profile that grows with every vote.</p>
     </div>
   </div>
@@ -688,7 +817,7 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
       <div class="tier-name">Star Creator</div>
       <div class="tier-votes">5,000 – 24,999 votes</div>
       <ul class="tier-perks">
-        <li>Monthly shoutout on ForkIt's Instagram & TikTok</li>
+        <li>Monthly shoutout on ForkIt's Instagram &amp; TikTok</li>
         <li>Cross-promoted to our growing audience</li>
         <li>Verified creator badge on all recipes</li>
         <li>Early access to new features before public</li>
@@ -701,7 +830,7 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
       <div class="tier-votes">25,000+ votes</div>
       <ul class="tier-perks">
         <li>Warm intros to food brands who contact ForkIt</li>
-        <li>Press & media feature opportunities</li>
+        <li>Press &amp; media feature opportunities</li>
         <li>Permanent Legend badge across the platform</li>
         <li>Dedicated <code>/creators/[you]</code> spotlight page</li>
         <li>Featured in ForkIt's press kit</li>
@@ -794,16 +923,90 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
         </div>
       </div>
     </div>
+    <!-- [12] third testimonial updated to 4 stars + new quote -->
     <div class="tcard reveal" style="transition-delay:.2s">
       <div class="tcard-quote">"</div>
-      <p class="tcard-text">The ingredient checklist sounds like a tiny thing but it changed how I prep. No more "did I add the cumin yet?" And the embedded YouTube video on every recipe is just chef's kiss.</p>
+      <p class="tcard-text">The ingredient checklist and embedded videos are genuinely useful. Would love to see more Southeast Asian recipes — but I know the community is early. Still the most fun I've had discovering new dishes.</p>
       <div class="tcard-user">
         <div class="tcard-av">SR</div>
         <div>
           <div class="tcard-name">@sara.recipes</div>
           <div class="tcard-handle">🔥 Hot Chef · Philippines</div>
-          <div class="tcard-stars">★★★★★</div>
+          <div class="tcard-stars">★★★★☆</div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section id="faq">
+  <div class="faq-header">
+    <div class="section-kicker reveal">FAQ</div>
+    <h2 class="section-headline reveal">Good questions. <em>Honest answers.</em></h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <button class="faq-question" aria-label="Toggle FAQ: Is ForkIt actually free?">
+        <span>Is ForkIt actually free? What's the catch?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Completely free to browse, swipe, and cook. No credit card, no trial period, no catch. We plan to add optional creator monetization features in the future (see our roadmap), but browsing and cooking will always be free. We don't sell your data or show ads.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.05s">
+      <button class="faq-question" aria-label="Toggle FAQ: Do I need an account to see recipes?">
+        <span>Do I need an account to see recipes?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>No. Browse, swipe, explore, and cook — all without an account. You only need to create a free account if you want to save recipes to your cookbook, vote for your favourites, or submit your own recipes.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.1s">
+      <button class="faq-question" aria-label="Toggle FAQ: Can I submit my own recipes?">
+        <span>Can I submit my own recipes even if I'm not a professional chef?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Absolutely. ForkIt is for home cooks, street food legends, and weekend experimenters as much as it is for trained chefs. If your food is good, it'll earn votes. Simple as that.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.15s">
+      <button class="faq-question" aria-label="Toggle FAQ: How are the curated recipes sourced?">
+        <span>How are the curated recipes sourced?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Our launch library comes from TheMealDB — a free, open recipe database — which we've imported and formatted to match ForkIt's style. All curated recipes are clearly marked with a '🍴 ForkIt Curated' badge. As the community grows, community-submitted recipes will gradually take over as the primary content.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.2s">
+      <button class="faq-question" aria-label="Toggle FAQ: Will you ever show ads?">
+        <span>Will you ever show ads?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>No. ForkIt's business model is based on optional creator monetization (tipping, sponsored placements), not advertising. Ads would ruin the experience we're trying to build. Our monetization roadmap is published publicly in the Creator Rewards section above.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.25s">
+      <button class="faq-question" aria-label="Toggle FAQ: Is this worth my time as a food creator?">
+        <span>I'm a food creator — is this worth my time if you can't pay me yet?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Honest answer: it depends on your goals. ForkIt gives you a free SEO-indexed portfolio, a growing community of food lovers, and a leaderboard to build your name. It won't pay your rent today. But if you want an early foothold on a platform built for creators — not for ad revenue — this is the right time to join.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal" style="transition-delay:.3s">
+      <button class="faq-question" aria-label="Toggle FAQ: What countries' recipes are available?">
+        <span>What countries' recipes are available?</span>
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>We currently have 20+ cuisines including Japanese, Chinese, Indian, Thai, Mexican, Moroccan, Italian, French, Greek, Vietnamese, Turkish, Malaysian, and more. The library grows every week as our community adds new recipes.</p>
       </div>
     </div>
   </div>
@@ -824,17 +1027,11 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
   <div class="cta-guest-note reveal">
     ✅ Browse, swipe &amp; cook — completely free, no sign-up
   </div>
+  <!-- [5] removed store-btn elements, replaced with web note -->
   <div class="cta-actions reveal">
-    <button class="btn-primary" style="padding:18px 40px;font-size:16px">🔥 Start Browsing Free</button>
-    <a class="store-btn" href="#">
-      <div class="store-icon">🍎</div>
-      <div><div class="store-text-small">Download on the</div><div class="store-text-big">App Store</div></div>
-    </a>
-    <a class="store-btn" href="#">
-      <div class="store-icon">▶</div>
-      <div><div class="store-text-small">Coming soon to</div><div class="store-text-big">Google Play</div></div>
-    </a>
+    <button class="btn-primary" style="padding:18px 40px;font-size:16px" aria-label="Start browsing recipes for free">🔥 Start Browsing Free</button>
   </div>
+  <p class="cta-web-note reveal">📱 Works on any device — no app download needed. Open in your browser and go.</p>
 </section>
 
 <!-- ═══ FOOTER ═══ -->
@@ -842,17 +1039,20 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
   <div>
     <div class="footer-logo">Fork<span>It</span></div>
     <p class="footer-tagline">The recipe platform that turns cooking into a discovery sport. Cook. Swipe. Conquer.</p>
+    <!-- [9] social dots changed to <a> tags with real links -->
     <div class="footer-social">
-      <div class="social-dot">📸</div>
-      <div class="social-dot">🎵</div>
-      <div class="social-dot">𝕏</div>
-      <div class="social-dot">▶</div>
+      <a class="social-dot" href="https://instagram.com/forkitapp" target="_blank" rel="noopener noreferrer" aria-label="ForkIt on Instagram">📸</a>
+      <a class="social-dot" href="https://tiktok.com/@forkitapp" target="_blank" rel="noopener noreferrer" aria-label="ForkIt on TikTok">🎵</a>
+      <a class="social-dot" href="https://twitter.com/forkitapp" target="_blank" rel="noopener noreferrer" aria-label="ForkIt on X">𝕏</a>
+      <a class="social-dot" href="https://youtube.com/@forkitapp" target="_blank" rel="noopener noreferrer" aria-label="ForkIt on YouTube">▶</a>
     </div>
   </div>
   <div class="footer-col">
     <div class="footer-col-title">Product</div>
     <a href="#how">How It Works</a>
     <a href="#features">Features</a>
+    <!-- [9] added leaderboard link -->
+    <a href="/leaderboard">Leaderboard</a>
     <a href="#curated">Curated Library</a>
     <a href="#">Web App</a>
     <a href="#">Changelog</a>
@@ -865,13 +1065,14 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
     <a href="#">Creator Dashboard</a>
     <a href="#">Monetization Roadmap</a>
   </div>
+  <!-- [3] 4th column changed to email capture -->
   <div class="footer-col">
-    <div class="footer-col-title">Company</div>
-    <a href="#">About Us</a>
-    <a href="#">Blog</a>
-    <a href="#">Press Kit</a>
-    <a href="#">Contact</a>
-    <a href="#">Privacy Policy</a>
+    <div class="footer-col-title">Stay in the Loop</div>
+    <p class="footer-email-desc">New recipes, creator spotlights, and launch news.</p>
+    <form class="footer-email-form" id="footerEmailForm">
+      <input type="email" placeholder="Your email" required />
+      <button type="submit" aria-label="Subscribe to updates">→</button>
+    </form>
   </div>
 </footer>
 <div class="footer-bottom">
@@ -883,7 +1084,11 @@ footer{padding:60px 6% 36px;border-top:1px solid var(--border);display:grid;grid
   </div>
 </div>
 
+<!-- [14] sticky mobile browse button -->
+<button class="sticky-cta" id="stickyCta" aria-label="Browse recipes for free">🔥 Browse Free</button>
+
 <script>
+/* cursor */
 const cursor = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
   cursor.style.left = e.clientX + 'px';
@@ -894,15 +1099,81 @@ document.querySelectorAll('a, button, .pill, .cflag, .country-tile, .social-dot,
   el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
 });
 
+/* nav scroll */
 const nav = document.getElementById('navbar');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
 
+/* reveal observer */
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+/* [2] mobile hamburger nav toggle */
+const navBurger = document.getElementById('navBurger');
+const navMobile = document.getElementById('navMobile');
+navBurger.addEventListener('click', () => {
+  const isOpen = navMobile.classList.toggle('open');
+  navBurger.textContent = isOpen ? '✕' : '☰';
+});
+navMobile.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navMobile.classList.remove('open');
+    navBurger.textContent = '☰';
+  });
+});
+
+/* [3] hero email form */
+const heroEmailForm = document.getElementById('heroEmailForm');
+heroEmailForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const container = document.getElementById('heroEmail');
+  container.innerHTML = '<div class="hero-email-success">✅ You\'re on the list!</div>';
+});
+
+/* [3] footer email form */
+const footerEmailForm = document.getElementById('footerEmailForm');
+footerEmailForm.addEventListener('submit', e => {
+  e.preventDefault();
+  footerEmailForm.innerHTML = '<div class="footer-email-success">✅ You\'re on the list!</div>';
+});
+
+/* [6] FAQ accordion */
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    /* close all others */
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-toggle').textContent = '+';
+    });
+    /* toggle current */
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.querySelector('.faq-toggle').textContent = '+';
+    }
+  });
+});
+
+/* [10] scroll progress bar */
+const scrollProgress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  scrollProgress.style.width = pct + '%';
+});
+
+/* [14] sticky mobile browse button */
+const stickyCta = document.getElementById('stickyCta');
+window.addEventListener('scroll', () => {
+  if (window.innerWidth <= 768 && window.scrollY > window.innerHeight * 0.3) {
+    stickyCta.classList.add('visible');
+  } else {
+    stickyCta.classList.remove('visible');
+  }
+});
 </script>
 </body>
 </html>

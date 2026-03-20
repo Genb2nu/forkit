@@ -20,7 +20,7 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
   // Get the target profile
   const { data: targetProfile } = await supabase
     .from('profiles')
-    .select('id, username')
+    .select('id, username, push_token')
     .eq('username', username)
     .single();
 
@@ -76,6 +76,21 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
         follower_username: followerProfile?.username ?? 'someone',
       },
     });
+
+    // Send Expo push notification
+    if (targetProfile.push_token) {
+      fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: targetProfile.push_token,
+          title: '👤 New follower!',
+          body: `@${followerProfile?.username ?? 'someone'} started following you`,
+          data: { screen: 'profile', username: followerProfile?.username },
+          sound: 'default',
+        }),
+      }).catch(() => {}); // fire and forget
+    }
   }
 
   // Get updated follower count
