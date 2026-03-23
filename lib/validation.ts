@@ -48,8 +48,7 @@ export const CreateRecipeSchema = z.object({
   category: z
     .string()
     .min(1, 'Select a category')
-    .max(30)
-    .default('Miscellaneous'),
+    .max(30),
   difficulty: z.enum(['easy', 'medium', 'hard']),
   timeMinutes: z
     .number({ message: 'Enter cook time in minutes' })
