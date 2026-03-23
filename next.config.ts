@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+// Bypass corporate-proxy TLS certificate inspection.
+// Must be set before any TLS connections are initiated.
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {

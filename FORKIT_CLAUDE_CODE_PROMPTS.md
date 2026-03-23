@@ -868,7 +868,7 @@ generateMetadata() on every page:
 - All other (app) pages: relevant static metadata
 
 app/api/og/profile/[username]/route.tsx:
-- @vercel/og, 1200×630
+- @vercel/og, 1200×630.
 - Gradient background, avatar circle (initials), display name, @username
 - Tier badge, recipe count, vote count, ForkIt branding
 
@@ -988,27 +988,7 @@ When done, provide a complete summary of all pages, components, and API routes b
 ---
 
 ```
-Something is not working. Diagnose and fix it.
-
-PROJECT: ForkIt (Next.js 14 App Router, TypeScript, Supabase, Vercel Hobby)
-SPEC: FORKIT_PROJECT_SPEC.md v3.0.0
-
-PROBLEM:
-[DESCRIBE THE PROBLEM — include error messages, file path, expected vs actual behaviour]
-
-DIAGNOSIS STEPS:
-1. Read the relevant spec section for this feature
-2. Check the relevant file(s)
-3. Identify root cause
-4. Apply fix
-5. Explain what was wrong
-
-CONSTRAINTS:
-- Do not change the tech stack
-- Do not use 'any' TypeScript type as a workaround
-- Do not disable RLS policies as a shortcut
-- Do not add paid services
-- Guest-first model must be preserved — do not add auth checks to public routes as a "quick fix"
+git push -u origin master
 ```
 
 ---

@@ -62,6 +62,7 @@ export interface Recipe {
   video_note: string | null;
   published: boolean;
   featured: boolean;
+  category: string;
   source: RecipeSource;
   source_url: string | null;
   author_id: string;

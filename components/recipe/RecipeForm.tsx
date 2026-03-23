@@ -237,6 +237,7 @@ export function RecipeForm({ mode, initialData, onSuccess }: RecipeFormProps) {
           countryName: initialData.country_name,
           countryFlag: initialData.country_flag,
           difficulty: initialData.difficulty,
+          category: initialData.category ?? 'Miscellaneous',
           timeMinutes: initialData.time_minutes,
           servings: initialData.servings,
           tags: initialData.tags?.map((t) => t.name) ?? [],
@@ -267,6 +268,7 @@ export function RecipeForm({ mode, initialData, onSuccess }: RecipeFormProps) {
           countryName: '',
           countryFlag: '',
           difficulty: 'medium',
+          category: 'Miscellaneous',
           timeMinutes: 30,
           servings: 2,
           tags: [],
@@ -499,6 +501,30 @@ export function RecipeForm({ mode, initialData, onSuccess }: RecipeFormProps) {
               />
             )}
           />
+
+          {/* Category */}
+          <div>
+            <label className="block text-xs font-mono text-text-2 mb-1.5">
+              Category *
+            </label>
+            <select
+              {...register('category')}
+              className="w-full rounded-xl bg-white/5 border border-white/7 px-4 py-3 text-sm text-cream outline-none focus:border-fire/50 transition-colors"
+            >
+              {[
+                'Beef', 'Breakfast', 'Chicken', 'Dessert', 'Goat', 'Lamb',
+                'Miscellaneous', 'Pasta', 'Pork', 'Seafood', 'Side', 'Starter',
+                'Vegan', 'Vegetarian',
+              ].map((cat) => (
+                <option key={cat} value={cat} className="bg-bg-primary text-cream">
+                  {cat}
+                </option>
+              ))}
+            </select>
+            {errors.category && (
+              <p className="mt-1 text-xs text-ember">{errors.category.message}</p>
+            )}
+          </div>
 
           {/* Difficulty */}
           <div>

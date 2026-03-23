@@ -23,22 +23,26 @@ export function CountryGrid({ countries }: CountryGridProps) {
   // Fetch top dish for selected country
   useEffect(() => {
     if (!selectedCountry) return;
-    if (topDishes[selectedCountry] !== undefined) return;
 
-    async function fetchTopDish() {
-      try {
-        const res = await fetch(
-          `/api/recipes?country=${selectedCountry}&sort=votes&limit=1`
-        );
-        const data = await res.json();
-        const topRecipe = data.recipes?.[0] ?? null;
-        setTopDishes((prev) => ({ ...prev, [selectedCountry!]: topRecipe }));
-      } catch {
-        setTopDishes((prev) => ({ ...prev, [selectedCountry!]: null }));
-      }
-    }
-    fetchTopDish();
-  }, [selectedCountry, topDishes]);
+    // Check inside the callback using functional state to avoid topDishes dependency
+    setTopDishes((prev) => {
+      if (prev[selectedCountry] !== undefined) return prev;
+
+      // Fire-and-forget fetch, then update state when done
+      fetch(`/api/recipes?country=${selectedCountry}&sort=votes&limit=1`)
+        .then((res) => res.json())
+        .then((data) => {
+          const topRecipe = data.recipes?.[0] ?? null;
+          setTopDishes((p) => ({ ...p, [selectedCountry]: topRecipe }));
+        })
+        .catch(() => {
+          setTopDishes((p) => ({ ...p, [selectedCountry]: null }));
+        });
+
+      // Return a sentinel to prevent duplicate fetches
+      return { ...prev, [selectedCountry]: null };
+    });
+  }, [selectedCountry]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

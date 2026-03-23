@@ -12,8 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import type { Notification, NotificationType } from '@/types';
+import { useAuthPromptStore } from '@/stores/authPromptStore';
+
+const NAV_ITEMS = [
+  { href: '/discover', label: 'Swipe', icon: '🔥' },
+  { href: '/explore', label: 'Explore', icon: '🌍' },
+  { href: '/leaderboard', label: 'Board', icon: '🏆' },
+  { href: '/create', label: 'Create', icon: '✨', authOnly: true },
+];
 
 const NOTIFICATION_ICONS: Record<NotificationType, string> = {
   new_vote: '❤️',
@@ -53,6 +61,8 @@ function timeAgo(dateStr: string): string {
 export function AppNav() {
   const { user, isAuthenticated } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const openAuthPrompt = useAuthPromptStore((s) => s.openAuthPrompt);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -107,6 +117,39 @@ export function AppNav() {
       <Link href="/discover" className="font-display font-bold text-lg text-cream">
         Fork<span className="text-fire">It</span>
       </Link>
+
+      {/* Desktop nav links — hidden on mobile where BottomNav is shown */}
+      <div className="hidden md:flex items-center gap-1">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname?.startsWith(item.href);
+          if (item.authOnly && !isAuthenticated) {
+            return (
+              <button
+                key={item.href}
+                onClick={() => openAuthPrompt('submit')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm text-muted-custom hover:text-cream hover:bg-bg-surface transition-colors"
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          }
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm transition-colors ${
+                isActive
+                  ? 'text-fire bg-fire/10 font-medium'
+                  : 'text-muted-custom hover:text-cream hover:bg-bg-surface'
+              }`}
+            >
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Right side */}
       <div className="flex items-center gap-3">

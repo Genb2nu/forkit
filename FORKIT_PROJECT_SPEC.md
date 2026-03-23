@@ -4,7 +4,7 @@
 > **Prepared for:** Claude Code development
 > **Tagline:** Cook. Swipe. Conquer.
 > **Changelog v3:** Added TheMealDB seeding, guest-first auth model, AuthPromptModal, `source` column, updated phases, merged cold start strategy.
-
+.....
 ---
 
 ## ⚠️ Budget & Constraints

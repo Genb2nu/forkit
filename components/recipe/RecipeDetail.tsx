@@ -104,10 +104,8 @@ export function RecipeDetail({ recipe, currentUserId }: RecipeDetailProps) {
     const wasFollowing = isFollowing;
     setIsFollowing(!wasFollowing);
     try {
-      const res = await fetch('/api/follows', {
+      const res = await fetch(`/api/follows/${recipe.author?.username}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ followingId: recipe.author_id }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -138,44 +136,82 @@ export function RecipeDetail({ recipe, currentUserId }: RecipeDetailProps) {
     <div className="min-h-screen bg-bg-base">
       {/* HERO */}
       <div className="relative" style={{ background: gradient }}>
-        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/70" />
+        {/* Recipe hero image */}
+        {recipe.image_url && (
+          <img
+            src={recipe.image_url}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+        )}
+
+        <div className={`absolute inset-0 ${recipe.image_url ? 'bg-linear-to-b from-black/50 via-black/20 to-black/80' : 'bg-linear-to-b from-transparent via-transparent to-black/70'}`} />
 
         <div className="relative z-10 px-4 pt-4 pb-8">
           {/* Top bar */}
           <div className="flex items-center justify-between mb-8">
             <button
               onClick={() => router.back()}
-              className="w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white"
-              aria-label="Close"
+              className="w-10 h-10 rounded-full icon-btn-glass flex items-center justify-center text-white hover:-translate-x-0.5 transition-transform"
+              aria-label="Go back"
             >
-              ←
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
             </button>
             <div className="flex items-center gap-2">
               {isOwner && !editMode && (
                 <button
                   onClick={() => setEditMode(true)}
-                  className="px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-sm text-white text-xs"
+                  className="px-3 py-1.5 rounded-full icon-btn-glass text-white text-xs"
                 >
                   ✏️ Edit
                 </button>
               )}
               <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: recipe.title, url: window.location.href });
+                  } else {
+                    navigator.clipboard?.writeText(window.location.href);
+                    toast.success('📋 Link copied to clipboard');
+                  }
+                }}
+                className="w-10 h-10 rounded-full icon-btn-glass flex items-center justify-center text-white hover:-rotate-12 transition-transform"
+                aria-label="Share recipe"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              </button>
+              <button
                 onClick={toggleSave}
                 disabled={saveLoading}
-                className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center text-lg ${
-                  saved ? 'bg-fire/80 text-white' : 'bg-black/30 text-white'
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
+                  saved
+                    ? 'bg-fire border border-fire text-white'
+                    : 'icon-btn-glass text-white'
                 }`}
                 aria-label="Save recipe"
               >
-                🔖
+                <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
+                </svg>
               </button>
             </div>
           </div>
 
-          {/* Emoji + vote */}
+          {/* Emoji (only when no image) + vote */}
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-[52px] drop-shadow-lg">{recipe.emoji}</span>
+              {!recipe.image_url && (
+                <span className="text-[56px] drop-shadow-lg inline-block animate-float-gentle">{recipe.emoji}</span>
+              )}
             </div>
             <button
               onClick={toggleVote}
@@ -184,11 +220,13 @@ export function RecipeDetail({ recipe, currentUserId }: RecipeDetailProps) {
               aria-label="Vote for this recipe"
             >
               <span
-                className={`text-2xl transition-transform ${voted ? 'scale-110' : ''}`}
+                className={`text-[28px] transition-transform duration-300 ${
+                  voted ? 'scale-110 animate-heart-pop' : 'hover:scale-125'
+                }`}
               >
                 {voted ? '❤️' : '🤍'}
               </span>
-              <span className="text-white text-xs font-medium">{voteCount}</span>
+              <span className="text-white text-xs font-semibold">{voteCount}</span>
             </button>
           </div>
 
@@ -209,16 +247,16 @@ export function RecipeDetail({ recipe, currentUserId }: RecipeDetailProps) {
 
           {/* Chips */}
           <div className="flex flex-wrap gap-2 mt-3">
-            <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+            <span className="bg-white/15 backdrop-blur-sm border border-white/10 text-white text-xs px-3 py-1.5 rounded-full">
               {recipe.country_flag} {recipe.country_name}
             </span>
-            <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+            <span className="bg-white/15 backdrop-blur-sm border border-white/10 text-white text-xs px-3 py-1.5 rounded-full">
               ⏱ {recipe.time_minutes}m
             </span>
-            <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+            <span className="bg-white/15 backdrop-blur-sm border border-white/10 text-white text-xs px-3 py-1.5 rounded-full">
               🍽️ {recipe.servings} servings
             </span>
-            <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full capitalize">
+            <span className="bg-white/15 backdrop-blur-sm border border-white/10 text-white text-xs px-3 py-1.5 rounded-full capitalize">
               {recipe.difficulty}
             </span>
           </div>

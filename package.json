@@ -17,6 +17,7 @@
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.2",
     "@tanstack/react-query": "^5.90.21",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/og": "^0.11.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -49,6 +50,7 @@
     "eslint-config-next": "16.1.7",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "undici": "^7.24.5",
     "vitest": "^4.1.0"
   },
   "optionalDependencies": {

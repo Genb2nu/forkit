@@ -18,16 +18,28 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         className="relative rounded-2xl overflow-hidden border border-white/7 hover:border-fire/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-fire/5 transition-all duration-200 cursor-pointer"
         style={{ background: gradient }}
       >
+        {/* Recipe image */}
+        {recipe.image_url && (
+          <img
+            src={recipe.image_url}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+        )}
+
         {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/70" />
+        <div className={`absolute inset-0 ${recipe.image_url ? 'bg-linear-to-b from-black/40 via-black/20 to-black/80' : 'bg-linear-to-b from-black/20 via-transparent to-black/70'}`} />
 
         {/* Content */}
         <div className="relative p-4 min-h-36 flex flex-col justify-between">
-          {/* Top: Emoji + Vote count */}
+          {/* Top: Emoji (only when no image) + Vote count */}
           <div className="flex items-start justify-between">
-            <span className="text-4xl drop-shadow-lg group-hover:scale-110 transition-transform">
-              {recipe.emoji}
-            </span>
+            {!recipe.image_url && (
+              <span className="text-4xl drop-shadow-lg group-hover:scale-110 transition-transform">
+                {recipe.emoji}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1 bg-black/30 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white/80">
               ♥ {recipe.total_votes}
             </span>

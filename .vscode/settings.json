@@ -1,0 +1,38 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "npx next": true,
+        "npx tsx": true,
+        "/^cd \"c:\\\\Eugene\\\\Personal Project\\\\forkit\"; npx tsx scripts/add-recipe-images\\.ts 2>&1 \\| Tee-Object -Variable migrationOutput$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd \"c:\\\\Eugene\\\\Personal Project\\\\forkit\"; node -e \"\nprocess\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED = '0';\nconst url = 'https://www\\.themealdb\\.com/images/media/meals/naqyel1608588563\\.jpg';\nfetch\\(url, \\{ redirect: 'follow' \\}\\)\n  \\.then\\(r => console\\.log\\('Status:', r\\.status, r\\.statusText\\)\\)\n  \\.catch\\(e => console\\.error\\('Error:', e\\.message\\)\\);\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd \"c:\\\\Eugene\\\\Personal Project\\\\forkit\"; node -e \"process\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0'; fetch\\('https://www\\.themealdb\\.com/images/media/meals/naqyel1608588563\\.jpg'\\)\\.then\\(r=>console\\.log\\('Status:',r\\.status\\)\\)\\.catch\\(e=>console\\.error\\('Err:',e\\.message\\)\\);\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd \"c:\\\\Eugene\\\\Personal Project\\\\forkit\"; node -e \"\nprocess\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0';\nconst https = require\\('https'\\);\nconst url = 'https://www\\.themealdb\\.com/images/media/meals/naqyel1608588563\\.jpg';\nconsole\\.log\\('Testing:', url\\);\nconst req = https\\.get\\(url, \\{timeout: 10000\\}, \\(res\\) => \\{\n  console\\.log\\('Status:', res\\.statusCode\\);\n  res\\.resume\\(\\);\n  res\\.on\\('end', \\(\\) => \\{ console\\.log\\('Done'\\); process\\.exit\\(0\\); \\}\\);\n\\}\\);\nreq\\.on\\('error', \\(e\\) => \\{ console\\.log\\('Error:', e\\.message\\); process\\.exit\\(0\\); \\}\\);\nreq\\.on\\('timeout', \\(\\) => \\{ console\\.log\\('Timeout'\\); req\\.destroy\\(\\); process\\.exit\\(0\\); \\}\\);\nsetTimeout\\(\\(\\) => \\{ console\\.log\\('Hard timeout'\\); process\\.exit\\(0\\); \\}, 15000\\);\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e \"process\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0';const https=require\\('https'\\);https\\.get\\('https://www\\.themealdb\\.com/images/media/meals/naqyel1608588563\\.jpg',\\{timeout:10000\\},\\(res\\)=>\\{console\\.log\\('Status:',res\\.statusCode\\);res\\.resume\\(\\);res\\.on\\('end',\\(\\)=>process\\.exit\\(0\\)\\)\\}\\)\\.on\\('error',\\(e\\)=>\\{console\\.log\\('Err:',e\\.message\\);process\\.exit\\(0\\)\\}\\)\\.on\\('timeout',function\\(\\)\\{console\\.log\\('Timeout'\\);this\\.destroy\\(\\);process\\.exit\\(0\\)\\}\\);setTimeout\\(\\(\\)=>\\{console\\.log\\('HardTimeout'\\);process\\.exit\\(0\\)\\},15000\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e \"process\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0'; require\\('https'\\)\\.get\\('https://www\\.themealdb\\.com/images/media/meals/naqyel1608588563\\.jpg', \\{timeout:8000\\}, r => \\{ console\\.log\\(r\\.statusCode\\); r\\.resume\\(\\); r\\.on\\('end', \\(\\) => process\\.exit\\(0\\)\\); \\}\\)\\.on\\('error', e => \\{ console\\.log\\('err:', e\\.message\\); process\\.exit\\(0\\); \\}\\)\\.on\\('timeout', function\\(\\) \\{ console\\.log\\('timeout'\\); this\\.destroy\\(\\); process\\.exit\\(0\\); \\}\\); setTimeout\\(\\(\\) => process\\.exit\\(0\\), 12000\\);\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e \"process\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0'; require\\('https'\\)\\.get\\('https://www\\.themealdb\\.com/images/media/meals/wqqvyq1511179730\\.jpg', \\{timeout:8000\\}, r => \\{ console\\.log\\(r\\.statusCode\\); r\\.resume\\(\\); r\\.on\\('end', \\(\\) => process\\.exit\\(0\\)\\); \\}\\)\\.on\\('error', e => \\{ console\\.log\\('err:', e\\.message\\); process\\.exit\\(0\\); \\}\\)\\.on\\('timeout', function\\(\\) \\{ console\\.log\\('timeout'\\); this\\.destroy\\(\\); process\\.exit\\(0\\); \\}\\); setTimeout\\(\\(\\) => process\\.exit\\(0\\), 12000\\);\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e \"process\\.env\\.NODE_TLS_REJECT_UNAUTHORIZED='0';require\\('https'\\)\\.get\\('https://www\\.themealdb\\.com/images/media/meals/wqqvyq1511179730\\.jpg',\\{timeout:8000\\},r=>\\{console\\.log\\(r\\.statusCode\\);r\\.resume\\(\\);r\\.on\\('end',\\(\\)=>process\\.exit\\(0\\)\\)\\}\\)\\.on\\('error',e=>\\{console\\.log\\('err:',e\\.message\\);process\\.exit\\(0\\)\\}\\)\\.on\\('timeout',function\\(\\)\\{console\\.log\\('timeout'\\);this\\.destroy\\(\\);process\\.exit\\(0\\)\\}\\);setTimeout\\(\\(\\)=>process\\.exit\\(0\\),12000\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

@@ -45,6 +45,11 @@ export const CreateRecipeSchema = z.object({
   countryCode: z.string().min(2, 'Select a country').max(3),
   countryName: z.string().min(1, 'Country name is required'),
   countryFlag: z.string().min(1, 'Country flag is required'),
+  category: z
+    .string()
+    .min(1, 'Select a category')
+    .max(30)
+    .default('Miscellaneous'),
   difficulty: z.enum(['easy', 'medium', 'hard']),
   timeMinutes: z
     .number({ message: 'Enter cook time in minutes' })

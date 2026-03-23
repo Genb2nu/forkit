@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Ingredient } from '@/types';
+import { parseIngredient } from '@/lib/ingredientEmoji';
 
 interface IngredientListProps {
   ingredients: Ingredient[];
@@ -14,6 +15,12 @@ export function IngredientList({ ingredients, editable, onUpdate }: IngredientLi
   const checkedCount = checked.size;
   const total = ingredients.length;
   const progress = total > 0 ? (checkedCount / total) * 100 : 0;
+
+  // Parse ingredients into structured data with emojis
+  const parsed = useMemo(
+    () => ingredients.map((ing) => ({ ...ing, parsed: parseIngredient(ing.text) })),
+    [ingredients]
+  );
 
   const toggleCheck = (id: string) => {
     setChecked((prev) => {
@@ -73,41 +80,86 @@ export function IngredientList({ ingredients, editable, onUpdate }: IngredientLi
   }
 
   return (
-    <div className="space-y-3">
-      {/* Progress */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-muted-custom text-xs">
+    <div className="space-y-2">
+      {/* Progress bar */}
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-muted-custom text-xs font-mono">
           {checkedCount}/{total} ready
         </span>
         <div className="flex-1 h-1.5 bg-bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-fire rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-full rounded-full transition-all duration-400 ease-out"
+            style={{
+              width: `${progress}%`,
+              background: 'linear-gradient(90deg, #f97316, #ef4444)',
+            }}
           />
         </div>
       </div>
 
-      {/* Ingredient rows */}
-      {ingredients.map((ing) => {
+      {/* Visual ingredient cards */}
+      {parsed.map((ing) => {
         const isChecked = checked.has(ing.id);
         return (
           <button
             key={ing.id}
             onClick={() => toggleCheck(ing.id)}
-            className={`w-full flex items-center gap-3 py-2 px-3 rounded-lg text-left transition-colors ${
+            className={`w-full flex items-center gap-3 py-2.5 px-3 rounded-xl text-left transition-all duration-200 border ${
               isChecked
-                ? 'bg-fire/10 line-through text-muted-custom'
-                : 'hover:bg-bg-muted text-cream'
+                ? 'bg-fire/5 border-fire/15'
+                : 'border-transparent hover:bg-white/3 hover:border-border'
             }`}
           >
+            {/* Emoji visual */}
             <span
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] shrink-0 transition-colors ${
+              className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0 transition-transform duration-200 ${
+                isChecked ? 'scale-90 opacity-50' : 'hover:scale-110 hover:-rotate-6'
+              }`}
+            >
+              {ing.parsed.emoji}
+            </span>
+
+            {/* Name + prep subtitle */}
+            <span className="flex-1 min-w-0">
+              <span
+                className={`block text-sm font-medium transition-colors ${
+                  isChecked ? 'text-muted-custom line-through' : 'text-cream'
+                }`}
+              >
+                {ing.parsed.name || ing.text}
+              </span>
+              {ing.parsed.prep && (
+                <span
+                  className={`block text-[11px] mt-0.5 font-mono transition-colors ${
+                    isChecked ? 'text-muted-custom/50 line-through' : 'text-muted-custom'
+                  }`}
+                >
+                  {ing.parsed.prep}
+                </span>
+              )}
+            </span>
+
+            {/* Quantity badge */}
+            {ing.parsed.quantity && (
+              <span
+                className={`text-[11px] font-mono shrink-0 px-2 py-0.5 rounded-lg transition-colors ${
+                  isChecked
+                    ? 'text-muted-custom bg-bg-muted'
+                    : 'text-fire bg-fire/10'
+                }`}
+              >
+                {ing.parsed.quantity}
+              </span>
+            )}
+
+            {/* Checkbox */}
+            <span
+              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] shrink-0 transition-all duration-200 ${
                 isChecked ? 'border-fire bg-fire text-white' : 'border-border'
               }`}
             >
               {isChecked && '✓'}
             </span>
-            <span className="text-sm">{ing.text}</span>
           </button>
         );
       })}

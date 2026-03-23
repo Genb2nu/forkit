@@ -1,8 +1,14 @@
 'use client';
 
+import { useRef } from 'react';
 import { motion, useMotionValue, useTransform, type PanInfo } from 'framer-motion';
 import type { Recipe } from '@/types';
 import { getCuisineGradient } from '@/lib/rewards';
+
+// Max pointer movement (px) to still count as a tap/click, not a drag
+const TAP_THRESHOLD = 10;
+// Max time (ms) for a tap — longer = drag/hold
+const TAP_MAX_DURATION = 300;
 
 interface SwipeCardProps {
   recipe: Recipe;
@@ -28,10 +34,22 @@ export function SwipeCard({
   const saveOpacity = useTransform(x, [0, 60, 150], [0, 0.6, 1]);
   const skipOpacity = useTransform(x, [-150, -60, 0], [1, 0.6, 0]);
 
+  // Track pointer start to distinguish tap vs drag on desktop
+  const pointerStart = useRef<{ x: number; y: number; time: number } | null>(null);
+  const isDragging = useRef(false);
+
   const gradient = getCuisineGradient(recipe.country_code);
+
+  const handleDragStart = () => {
+    isDragging.current = true;
+  };
 
   const handleDragEnd = (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
+
+    // Reset drag flag after a tick so the click handler can read it
+    setTimeout(() => { isDragging.current = false; }, 50);
+
     if (Math.abs(velocity.x) > 500 || Math.abs(offset.x) > 120) {
       if (offset.x > 0) {
         onSwipeRight();
@@ -57,6 +75,7 @@ export function SwipeCard({
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.8}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       animate={animate}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -65,15 +84,25 @@ export function SwipeCard({
         className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl select-none"
         style={{ background: gradient }}
       >
+        {/* Recipe image background */}
+        {recipe.image_url && (
+          <img
+            src={recipe.image_url}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+        )}
+
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-black/70" />
+        <div className={`absolute inset-0 ${recipe.image_url ? 'bg-linear-to-b from-black/40 via-black/10 to-black/80' : 'bg-linear-to-b from-black/10 via-transparent to-black/70'}`} />
 
         {/* SAVE overlay */}
         <motion.div
           className="absolute top-8 left-6 z-10 rounded-xl border-4 border-green-500 px-4 py-2 -rotate-12"
           style={{ opacity: saveOpacity }}
         >
-          <span className="text-green-500 font-bold text-2xl tracking-wider">SAVE 🔥</span>
+          <span className="text-green-500 font-bold text-2xl tracking-wider">VOTE ❤️</span>
         </motion.div>
 
         {/* SKIP overlay */}
@@ -96,9 +125,32 @@ export function SwipeCard({
             </span>
           </div>
 
-          {/* Centre: emoji */}
-          <div className="flex-1 flex items-center justify-center">
-            <span className="text-[68px] drop-shadow-lg">{recipe.emoji}</span>
+          {/* Tappable centre area — only navigates on true tap/click, not drag */}
+          <div
+            className="flex-1 flex items-center justify-center"
+            onPointerDown={(e) => {
+              pointerStart.current = { x: e.clientX, y: e.clientY, time: Date.now() };
+            }}
+            onPointerUp={(e) => {
+              if (isDragging.current) return;
+              const start = pointerStart.current;
+              if (!start) return;
+              const dx = Math.abs(e.clientX - start.x);
+              const dy = Math.abs(e.clientY - start.y);
+              const dt = Date.now() - start.time;
+              // Only count as a tap if pointer barely moved and was quick
+              if (dx < TAP_THRESHOLD && dy < TAP_THRESHOLD && dt < TAP_MAX_DURATION) {
+                onViewDetail();
+              }
+              pointerStart.current = null;
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${recipe.title} details`}
+          >
+            {!recipe.image_url && (
+              <span className="text-[68px] drop-shadow-lg">{recipe.emoji}</span>
+            )}
           </div>
 
           {/* Bottom section */}
@@ -148,25 +200,12 @@ export function SwipeCard({
                 </div>
               ) : null}
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onViewDetail();
-                }}
-                onPointerDown={(e) => e.stopPropagation()}
-                disabled={isNavigating}
-                className="bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full hover:bg-white/30 transition-colors disabled:opacity-70"
-                aria-label="View recipe details"
-              >
-                {isNavigating ? (
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Loading…
-                  </span>
-                ) : (
-                  'View →'
-                )}
-              </button>
+              {isNavigating && (
+                <span className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full">
+                  <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Loading…
+                </span>
+              )}
             </div>
           </div>
         </div>

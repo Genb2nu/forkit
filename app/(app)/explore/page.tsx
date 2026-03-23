@@ -11,39 +11,41 @@ export const metadata = {
 async function getExploreData() {
   const supabase = await createClient();
 
-  // Countries with recipes sorted by recipe_count DESC
-  const { data: countries } = await supabase
-    .from('countries')
-    .select('*')
-    .gt('recipe_count', 0)
-    .order('recipe_count', { ascending: false });
-
-  // Stats
-  const { count: totalCountries } = await supabase
-    .from('countries')
-    .select('*', { count: 'exact', head: true })
-    .gt('recipe_count', 0);
-
-  const { count: totalRecipes } = await supabase
-    .from('recipes')
-    .select('*', { count: 'exact', head: true })
-    .eq('published', true);
-
-  const { count: totalProfiles } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true });
-
-  // Trending recipes (last 7 days, most voted)
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const { data: trendingRecipes } = await supabase
-    .from('recipes')
-    .select('*')
-    .eq('published', true)
-    .gte('created_at', sevenDaysAgo.toISOString())
-    .order('total_votes', { ascending: false })
-    .limit(5);
+  // Run all queries in parallel
+  const [
+    { data: countries },
+    { count: totalCountries },
+    { count: totalRecipes },
+    { count: totalProfiles },
+    { data: trendingRecipes },
+  ] = await Promise.all([
+    supabase
+      .from('countries')
+      .select('*')
+      .gt('recipe_count', 0)
+      .order('recipe_count', { ascending: false }),
+    supabase
+      .from('countries')
+      .select('*', { count: 'exact', head: true })
+      .gt('recipe_count', 0),
+    supabase
+      .from('recipes')
+      .select('*', { count: 'exact', head: true })
+      .eq('published', true),
+    supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true }),
+    supabase
+      .from('recipes')
+      .select('*')
+      .eq('published', true)
+      .gte('created_at', sevenDaysAgo.toISOString())
+      .order('total_votes', { ascending: false })
+      .limit(5),
+  ]);
 
   // If not enough recent recipes, fallback to top-voted overall
   let trending = trendingRecipes ?? [];

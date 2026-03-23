@@ -7,6 +7,7 @@ import { detectVideoType } from '@/lib/video';
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const country = searchParams.get('country');
+  const category = searchParams.get('category');
   const tag = searchParams.get('tag');
   const sort = searchParams.get('sort') ?? 'votes';
   const search = searchParams.get('search');
@@ -26,6 +27,10 @@ export async function GET(request: NextRequest) {
   // Filters
   if (country) {
     query = query.eq('country_code', country.toUpperCase());
+  }
+
+  if (category) {
+    query = query.eq('category', category);
   }
 
   if (featured === 'true') {
@@ -112,6 +117,7 @@ export async function POST(request: NextRequest) {
       country_code: data.countryCode,
       country_name: data.countryName,
       country_flag: data.countryFlag,
+      category: data.category,
       difficulty: data.difficulty,
       time_minutes: data.timeMinutes,
       servings: data.servings,

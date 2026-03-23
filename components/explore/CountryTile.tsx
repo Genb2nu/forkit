@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import type { Country, Recipe } from '@/types';
 import { getCuisineGradient } from '@/lib/rewards';
 
@@ -18,12 +19,17 @@ export function CountryTile({
 }: CountryTileProps) {
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={isSelected}
+      aria-label={`${country.name} — ${country.recipe_count} recipes`}
       className={`rounded-2xl bg-bg-surface p-4 text-cream transition-all cursor-pointer border ${
         isSelected
           ? 'border-fire/50 ring-1 ring-fire/30'
           : 'border-border hover:-translate-y-1'
       }`}
       onClick={() => onSelect(country.code)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(country.code); } }}
     >
       <div className="flex items-start justify-between">
         <p className="text-3xl">{country.flag}</p>
@@ -69,12 +75,12 @@ export function CountryTile({
               Explore this cuisine!
             </p>
           )}
-          <a
+          <Link
             href={`/discover?country=${country.code}`}
             className="block text-center text-xs text-fire hover:text-fire/80 font-medium transition-colors"
           >
             Browse {country.name} recipes →
-          </a>
+          </Link>
         </div>
       )}
     </div>

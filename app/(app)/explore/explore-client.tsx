@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import type { Country, Recipe } from '@/types';
 import { CountryGrid } from '@/components/explore/CountryGrid';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -84,6 +85,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
           <input
             type="text"
             placeholder="Filter countries..."
+            aria-label="Filter countries"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-bg-surface border border-border text-cream text-sm placeholder:text-muted-custom focus:outline-none focus:border-fire/50 transition-colors"
@@ -109,6 +111,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
           <input
             type="text"
             placeholder="Search recipes..."
+            aria-label="Search recipes"
             value={recipeSearch}
             onChange={(e) => setRecipeSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-bg-surface border border-border text-cream text-sm placeholder:text-muted-custom focus:outline-none focus:border-fire/50 transition-colors"
@@ -140,7 +143,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
           ) : searchResults.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {searchResults.map((recipe) => (
-                <a
+                <Link
                   key={recipe.id}
                   href={`/recipe/${recipe.id}`}
                   className="group bg-bg-surface rounded-xl overflow-hidden border border-border hover:border-fire/30 transition-colors"
@@ -164,7 +167,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
                       ❤️ {recipe.total_votes} votes
                     </p>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           ) : (
@@ -204,7 +207,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
           </h2>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {trending.map((recipe) => (
-              <a
+              <Link
                 key={recipe.id}
                 href={`/recipe/${recipe.id}`}
                 className="shrink-0 w-44 bg-bg-surface rounded-xl border border-border overflow-hidden hover:border-fire/30 transition-colors group"
@@ -235,7 +238,7 @@ export function ExploreClient({ countries, trending }: ExploreClientProps) {
                     ❤️ {recipe.total_votes} · ⏱ {recipe.time_minutes}m
                   </p>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

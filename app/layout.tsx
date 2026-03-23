@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import { Toaster } from '@/components/ui/sonner';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import './globals.css';
@@ -66,6 +67,7 @@ export default function RootLayout({
           {children}
         </QueryProvider>
         <Toaster richColors position="top-right" />
+        <Analytics />
       </body>
     </html>
   );

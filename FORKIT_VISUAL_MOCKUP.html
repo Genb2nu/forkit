@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForkIt — Visual Enhancement Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ForkIt Design Tokens
+   ============================================================ */
+:root {
+  --bg-base: #0f0d0a;
+  --bg-surface: #1a1710;
+  --bg-muted: rgba(255,255,255,0.05);
+  --fire: #f97316;
+  --ember: #ef4444;
+  --forest: #22c55e;
+  --cream: #f5f0e8;
+  --text-2: rgba(245,240,232,0.65);
+  --muted: #6b6454;
+  --border: rgba(255,255,255,0.07);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg-base);
+  color:var(--cream);
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.mockup-wrapper {
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+}
+.section-label {
+  text-align:center;
+  padding:32px 16px 12px;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--fire);
+  border-top:1px solid var(--border);
+}
+.section-label:first-child { border-top:none; }
+.section-label span {
+  background:var(--bg-base);
+  padding:0 12px;
+}
+
+/* ============================================================
+   PART 1 — UPDATED BACK BUTTON & TOP BAR ICONS
+   ============================================================ */
+.hero {
+  position:relative;
+  background:linear-gradient(135deg,#d97706,#c2410c,#9a3412);
+  border-radius:0 0 24px 24px;
+  overflow:hidden;
+}
+.hero-overlay {
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.7));
+}
+.hero-content {
+  position:relative;z-index:10;
+  padding:16px 16px 28px;
+}
+.top-bar {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:32px;
+}
+
+/* --- NEW animated icon buttons --- */
+.icon-btn {
+  width:40px;height:40px;
+  border-radius:50%;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;
+}
+.icon-btn::before {
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);
+  opacity:0;transition:opacity 0.3s;
+}
+.icon-btn:hover::before { opacity:1; }
+.icon-btn:active { transform:scale(0.9); }
+
+.icon-btn-glass {
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.icon-btn-glass:hover {
+  background:rgba(0,0,0,0.5);
+  border-color:rgba(255,255,255,0.2);
+  box-shadow:0 0 20px rgba(249,115,22,0.15);
+}
+
+/* SVG icon inside */
+.icon-btn svg {
+  width:20px;height:20px;
+  stroke:white;stroke-width:2.5;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.icon-btn:hover svg { transform:translateX(-2px); }
+.icon-btn.save-btn:hover svg { transform:translateX(0) scale(1.15); }
+.icon-btn.share-btn:hover svg { transform:translateX(0) rotate(-12deg); }
+
+/* Saved state */
+.icon-btn.saved-active {
+  background:var(--fire);
+  border-color:var(--fire);
+}
+.icon-btn.saved-active svg {
+  fill:white;
+}
+
+.right-icons { display:flex;gap:8px; }
+
+/* Hero food emoji */
+.hero-emoji {
+  font-size:56px;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  animation:float-gentle 3s ease-in-out infinite;
+}
+@keyframes float-gentle {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  50% { transform:translateY(-6px) rotate(3deg); }
+}
+
+/* Vote button */
+.vote-btn {
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:none;background:none;cursor:pointer;
+}
+.vote-heart {
+  font-size:28px;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.vote-btn:hover .vote-heart { transform:scale(1.25); }
+.vote-btn.voted .vote-heart { animation:heartPop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes heartPop {
+  0% { transform:scale(1); }
+  30% { transform:scale(1.4); }
+  60% { transform:scale(0.9); }
+  100% { transform:scale(1.1); }
+}
+.vote-count { color:white;font-size:12px;font-weight:600; }
+
+.hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:700;
+  color:white;line-height:1.2;margin-top:16px;
+}
+.hero-chips {
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;
+}
+.chip {
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(8px);
+  color:white;font-size:12px;
+  padding:5px 12px;border-radius:9999px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+/* ============================================================
+   PART 2 — TABS
+   ============================================================ */
+.tabs-bar {
+  display:flex;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin:0 16px;
+  overflow:hidden;
+}
+.tab-btn {
+  flex:1;
+  padding:12px;
+  text-align:center;
+  font-size:14px;font-weight:600;
+  color:var(--muted);
+  border:none;background:none;cursor:pointer;
+  transition:all 0.3s;
+  position:relative;
+}
+.tab-btn.active {
+  color:var(--cream);
+  background:var(--bg-muted);
+}
+.tab-btn.active::after {
+  content:'';
+  position:absolute;bottom:0;left:20%;right:20%;
+  height:2px;
+  background:var(--fire);
+  border-radius:2px;
+}
+.tab-content { padding:16px; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ============================================================
+   PART 3 — VISUAL INGREDIENTS (the big enhancement!)
+   ============================================================ */
+.ingredient-progress-bar {
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:12px;
+}
+.progress-text {
+  font-size:11px;color:var(--muted);
+  white-space:nowrap;
+  font-family:'DM Mono',monospace;
+}
+.progress-track {
+  flex:1;height:6px;
+  background:var(--bg-muted);border-radius:99px;
+  overflow:hidden;
+}
+.progress-fill {
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--fire),var(--ember));
+  transition:width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* Individual ingredient card */
+.ingredient-card {
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:all 0.25s cubic-bezier(0.16,1,0.3,1);
+  border:1px solid transparent;
+  position:relative;
+  overflow:hidden;
+}
+.ingredient-card:hover {
+  background:rgba(255,255,255,0.03);
+  border-color:var(--border);
+}
+.ingredient-card.checked {
+  background:rgba(249,115,22,0.06);
+  border-color:rgba(249,115,22,0.15);
+}
+.ingredient-card.checked .ing-text {
+  color:var(--muted);
+  text-decoration:line-through;
+}
+
+/* Visual ingredient illustration container */
+.ing-visual {
+  width:48px;height:48px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  position:relative;
+  flex-shrink:0;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.ingredient-card:hover .ing-visual {
+  transform:scale(1.1) rotate(-5deg);
+}
+/* Subtle glow behind the emoji */
+.ing-visual::after {
+  content:'';position:absolute;inset:-4px;
+  border-radius:16px;
+  background:radial-gradient(circle,var(--glow-color,rgba(249,115,22,0.1)) 0%,transparent 70%);
+  z-index:-1;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.ingredient-card:hover .ing-visual::after { opacity:1; }
+
+/* Checkbox */
+.ing-check {
+  width:22px;height:22px;
+  border-radius:50%;
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:all 0.25s;
+  font-size:11px;color:transparent;
+}
+.ingredient-card.checked .ing-check {
+  border-color:var(--fire);
+  background:var(--fire);
+  color:white;
+}
+
+.ing-info { flex:1;min-width:0; }
+.ing-text {
+  font-size:14px;font-weight:500;
+  color:var(--cream);
+  transition:color 0.25s, text-decoration 0.25s;
+}
+.ing-subtext {
+  font-size:11px;
+  color:var(--muted);
+  font-family:'DM Mono',monospace;
+  margin-top:2px;
+}
+
+/* Quantity badge */
+.ing-qty {
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--fire);
+  background:rgba(249,115,22,0.1);
+  padding:3px 8px;
+  border-radius:8px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* ============================================================
+   PART 4 — INTERACTIVE COOKING STEPS WITH ANIMATIONS
+   ============================================================ */
+.step-progress-bar {
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:16px;
+}
+.step-progress-text {
+  font-size:11px;color:var(--muted);
+  white-space:nowrap;
+  font-family:'DM Mono',monospace;
+}
+.step-progress-track {
+  flex:1;height:6px;
+  background:var(--bg-muted);border-radius:99px;
+  overflow:hidden;
+}
+.step-progress-fill {
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--forest),#16a34a);
+  transition:width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* Step card */
+.step-card {
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  margin-bottom:12px;
+  overflow:hidden;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  cursor:pointer;
+}
+.step-card:hover {
+  border-color:rgba(255,255,255,0.12);
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  transform:translateY(-2px);
+}
+.step-card.completed {
+  border-color:rgba(34,197,94,0.25);
+  background:rgba(34,197,94,0.04);
+}
+.step-card.active-step {
+  border-color:rgba(249,115,22,0.3);
+  box-shadow:0 0 0 1px rgba(249,115,22,0.1),0 4px 24px rgba(249,115,22,0.08);
+}
+
+.step-header {
+  display:flex;align-items:center;gap:12px;
+  padding:14px 14px 0;
+}
+
+/* Step number circle */
+.step-num {
+  width:32px;height:32px;
+  border-radius:50%;
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+  color:var(--muted);
+  flex-shrink:0;
+  transition:all 0.3s;
+  font-family:'DM Mono',monospace;
+}
+.step-card.completed .step-num {
+  border-color:var(--forest);
+  background:var(--forest);
+  color:white;
+  font-size:14px;
+}
+.step-card.active-step .step-num {
+  border-color:var(--fire);
+  color:var(--fire);
+  box-shadow:0 0 0 4px rgba(249,115,22,0.1);
+}
+
+.step-title {
+  font-size:14px;font-weight:600;
+  color:var(--cream);
+  transition:color 0.25s;
+}
+.step-card.completed .step-title {
+  color:var(--muted);
+  text-decoration:line-through;
+}
+
+.step-body-area {
+  padding:8px 14px 14px;
+}
+.step-body-text {
+  font-size:13px;line-height:1.6;
+  color:var(--text-2);
+  margin-left:44px; /* aligned with title text */
+}
+.step-card.completed .step-body-text {
+  color:rgba(107,100,84,0.6);
+  text-decoration:line-through;
+}
+
+/* --- COOKING ANIMATION AREA inside steps --- */
+.step-animation {
+  margin:10px 14px 14px 44px;
+  height:64px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.02);
+  border:1px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;
+  overflow:hidden;
+  position:relative;
+}
+
+/* CUTTING ANIMATION — Knife going up and down slicing items */
+@keyframes knife-chop {
+  0%,100% { transform:translateY(0) rotate(0deg); }
+  40% { transform:translateY(-14px) rotate(-8deg); }
+  55% { transform:translateY(4px) rotate(2deg); }
+  70% { transform:translateY(-6px) rotate(-3deg); }
+  85% { transform:translateY(2px) rotate(0deg); }
+}
+@keyframes slice-appear {
+  0% { opacity:0; transform:translateX(0) scale(0.7); }
+  50% { opacity:1; transform:translateX(4px) scale(1); }
+  100% { opacity:0.4; transform:translateX(10px) scale(0.9); }
+}
+.knife-anim {
+  animation:knife-chop 1.6s ease-in-out infinite;
+  font-size:28px;
+  display:inline-block;
+}
+.veg-slice {
+  font-size:20px;
+  animation:slice-appear 1.6s ease-in-out infinite;
+}
+.veg-slice:nth-child(2) { animation-delay:0.15s; }
+.veg-slice:nth-child(3) { animation-delay:0.3s; }
+.veg-slice:nth-child(4) { animation-delay:0.45s; }
+
+/* SIZZLE ANIMATION — Pan with steam/sparks */
+@keyframes sizzle-shake {
+  0%,100% { transform:translateX(0); }
+  25% { transform:translateX(-2px) rotate(-1deg); }
+  75% { transform:translateX(2px) rotate(1deg); }
+}
+@keyframes steam-rise {
+  0% { opacity:0.8; transform:translateY(0) scale(1); }
+  100% { opacity:0; transform:translateY(-20px) scale(0.5); }
+}
+.pan-anim {
+  font-size:32px;
+  animation:sizzle-shake 0.4s ease-in-out infinite;
+  display:inline-block;
+}
+.steam {
+  font-size:16px;
+  animation:steam-rise 1.5s ease-out infinite;
+  position:absolute;
+}
+.steam:nth-child(2) { left:35%; animation-delay:0.3s; }
+.steam:nth-child(3) { left:50%; animation-delay:0.7s; }
+.steam:nth-child(4) { left:65%; animation-delay:1.1s; }
+
+/* STIRRING ANIMATION */
+@keyframes stir-rotate {
+  0% { transform:rotate(0deg); }
+  100% { transform:rotate(360deg); }
+}
+@keyframes bubble-up {
+  0%,100% { transform:translateY(0) scale(1); opacity:0.6; }
+  50% { transform:translateY(-8px) scale(1.2); opacity:1; }
+}
+.stir-anim {
+  font-size:28px;
+  animation:stir-rotate 2s linear infinite;
+  display:inline-block;
+}
+.bubble {
+  font-size:10px;
+  animation:bubble-up 1.2s ease-in-out infinite;
+}
+.bubble:nth-child(2) { animation-delay:0.3s; }
+.bubble:nth-child(3) { animation-delay:0.6s; }
+.bubble:nth-child(4) { animation-delay:0.9s; }
+
+/* BOILING ANIMATION */
+@keyframes boil-bubble {
+  0% { opacity:0; transform:translateY(10px) scale(0.3); }
+  50% { opacity:1; transform:translateY(-5px) scale(1); }
+  100% { opacity:0; transform:translateY(-18px) scale(0.6); }
+}
+.boil-drop {
+  font-size:14px;
+  animation:boil-bubble 1s ease-out infinite;
+  position:absolute;
+}
+.boil-drop:nth-child(1) { left:30%; animation-delay:0s; }
+.boil-drop:nth-child(2) { left:45%; animation-delay:0.25s; }
+.boil-drop:nth-child(3) { left:55%; animation-delay:0.5s; }
+.boil-drop:nth-child(4) { left:65%; animation-delay:0.75s; }
+
+/* PLATING ANIMATION */
+@keyframes plate-spin {
+  0%,100% { transform:rotate(0deg) scale(1); }
+  50% { transform:rotate(5deg) scale(1.05); }
+}
+@keyframes sparkle {
+  0%,100% { opacity:0; transform:scale(0.5); }
+  50% { opacity:1; transform:scale(1.2); }
+}
+.plate-anim { font-size:32px; animation:plate-spin 2s ease-in-out infinite; display:inline-block; }
+.sparkle-star {
+  font-size:12px;
+  animation:sparkle 1.5s ease-in-out infinite;
+  position:absolute;
+}
+.sparkle-star:nth-child(1) { top:8px; left:25%; animation-delay:0s; }
+.sparkle-star:nth-child(2) { top:12px; right:25%; animation-delay:0.5s; }
+.sparkle-star:nth-child(3) { bottom:8px; left:35%; animation-delay:1s; }
+
+/* PEEL ANIMATION */
+@keyframes peel-motion {
+  0%,100% { transform:rotate(0deg) translateX(0); }
+  25% { transform:rotate(-15deg) translateX(-3px); }
+  50% { transform:rotate(0deg) translateX(0); }
+  75% { transform:rotate(10deg) translateX(2px); }
+}
+.peel-anim { font-size:26px; animation:peel-motion 1.8s ease-in-out infinite; display:inline-block; }
+
+/* Peel falling bits */
+@keyframes peel-fall {
+  0% { opacity:1; transform:translateY(0) rotate(0deg); }
+  100% { opacity:0; transform:translateY(18px) rotate(45deg) translateX(8px); }
+}
+.peel-bit {
+  font-size:10px;
+  animation:peel-fall 1.2s ease-in infinite;
+  position:absolute;
+}
+.peel-bit:nth-child(2) { animation-delay:0.4s; left:55%; }
+.peel-bit:nth-child(3) { animation-delay:0.8s; left:65%; }
+
+/* MARINATING ANIMATION */
+@keyframes marinate-drip {
+  0% { transform:translateY(-8px); opacity:0; }
+  30% { opacity:1; }
+  100% { transform:translateY(12px); opacity:0; }
+}
+.drip {
+  font-size:14px;
+  animation:marinate-drip 1.5s ease-in infinite;
+  position:absolute;
+}
+.drip:nth-child(1) { left:35%; animation-delay:0s; }
+.drip:nth-child(2) { left:50%; animation-delay:0.4s; }
+.drip:nth-child(3) { left:60%; animation-delay:0.8s; }
+
+/* Timer badge in steps */
+.step-timer {
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--fire);
+  background:rgba(249,115,22,0.08);
+  padding:3px 8px;
+  border-radius:8px;
+  margin-left:44px;
+  margin-bottom:8px;
+}
+.step-timer svg {
+  width:12px;height:12px;stroke:var(--fire);fill:none;stroke-width:2;
+}
+
+/* Pro tip badge */
+.step-tip {
+  margin:0 14px 14px 44px;
+  padding:8px 12px;
+  background:rgba(249,115,22,0.05);
+  border-left:3px solid var(--fire);
+  border-radius:0 10px 10px 0;
+  font-size:12px;
+  color:var(--text-2);
+  line-height:1.5;
+}
+.step-tip strong { color:var(--fire); }
+
+/* ============================================================
+   PART 5 — COMPLETION CELEBRATION (updated)
+   ============================================================ */
+.celebration {
+  text-align:center;
+  padding:40px 16px;
+}
+.celebration-emoji {
+  font-size:64px;
+  animation:float-gentle 2s ease-in-out infinite;
+}
+.celebration h3 {
+  font-family:'Playfair Display',serif;
+  font-size:22px;margin:12px 0 8px;
+}
+.celebration p { font-size:13px;color:var(--text-2); }
+.share-btns {
+  display:flex;gap:8px;justify-content:center;
+  margin-top:16px;
+}
+.share-btn {
+  padding:8px 16px;
+  border-radius:999px;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  color:var(--cream);
+  font-size:12px;
+  cursor:pointer;
+  transition:all 0.25s;
+}
+.share-btn:hover {
+  border-color:rgba(249,115,22,0.3);
+  background:rgba(249,115,22,0.08);
+}
+
+/* ============================================================
+   WATERMARK / LABEL
+   ============================================================ */
+.mockup-title-bar {
+  text-align:center;
+  padding:24px 16px 8px;
+}
+.mockup-badge {
+  display:inline-block;
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--fire);
+  border:1px solid rgba(249,115,22,0.2);
+  padding:6px 16px;
+  border-radius:999px;
+}
+
+/* Comparison block */
+.comparison {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:0 16px;
+  margin-bottom:16px;
+}
+.compare-card {
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+}
+.compare-card.before { background:rgba(255,255,255,0.02); }
+.compare-card.after {
+  background:rgba(249,115,22,0.04);
+  border-color:rgba(249,115,22,0.15);
+}
+.compare-label {
+  font-size:10px;
+  font-family:'DM Mono',monospace;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.compare-card.before .compare-label { color:var(--muted); }
+.compare-card.after .compare-label { color:var(--fire); }
+
+/* Ingredient emoji map legend */
+.legend {
+  padding:0 16px 16px;
+}
+.legend h4 {
+  font-size:13px;font-weight:600;
+  color:var(--cream);
+  margin-bottom:8px;
+}
+.legend-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:6px;
+}
+.legend-item {
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--text-2);
+  padding:6px 8px;
+  border-radius:10px;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+}
+.legend-item span:first-child { font-size:20px; }
+
+/* Interactive JS states */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="mockup-wrapper">
+
+  <!-- ============================================================ -->
+  <!--   MOCKUP HEADER                                               -->
+  <!-- ============================================================ -->
+  <div class="mockup-title-bar">
+    <div class="mockup-badge">🍴 ForkIt Visual Enhancement Mockup</div>
+    <p style="color:var(--text-2);font-size:12px;margin-top:8px;line-height:1.5;">
+      Preview all proposed visual changes below.<br>
+      Click ingredients &amp; steps to see interactive states.
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   1. UPDATED ICONS — HERO TOP BAR                             -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>1 · Updated Back Button &amp; Icon Buttons</span></div>
+
+  <div class="comparison">
+    <div class="compare-card before">
+      <div class="compare-label">Before</div>
+      <div style="display:flex;gap:8px;">
+        <button style="width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.3);border:none;color:white;font-size:18px;cursor:pointer;">←</button>
+        <button style="width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.3);border:none;color:white;font-size:16px;cursor:pointer;">🔖</button>
+      </div>
+      <p style="font-size:10px;color:var(--muted);margin-top:8px;">Plain text arrow, emoji bookmark</p>
+    </div>
+    <div class="compare-card after">
+      <div class="compare-label">After ✨</div>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn icon-btn-glass" title="Back">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="icon-btn icon-btn-glass save-btn" title="Save">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </button>
+        <button class="icon-btn icon-btn-glass share-btn" title="Share">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+      </div>
+      <p style="font-size:10px;color:var(--muted);margin-top:8px;">SVG icons, glass morph, hover glow</p>
+    </div>
+  </div>
+
+  <!-- Full hero preview -->
+  <div style="padding:0 16px 16px;">
+    <div class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="top-bar">
+          <button class="icon-btn icon-btn-glass" onclick="history.back()" title="Go back">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="right-icons">
+            <button class="icon-btn icon-btn-glass share-btn" title="Share recipe">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+            <button class="icon-btn icon-btn-glass save-btn" id="heroSaveBtn" onclick="toggleSaveBtn(this)" title="Save recipe">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:end;justify-content:space-between;">
+          <div class="hero-emoji">🍲</div>
+          <button class="vote-btn" onclick="toggleVote(this)">
+            <span class="vote-heart">🤍</span>
+            <span class="vote-count">247</span>
+          </button>
+        </div>
+        <h1 class="hero-title">Filipino Chicken Adobo</h1>
+        <div class="hero-chips">
+          <span class="chip">🇵🇭 Philippines</span>
+          <span class="chip">⏱ 45m</span>
+          <span class="chip">🍽️ 4 servings</span>
+          <span class="chip">Medium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   2. VISUAL INGREDIENTS                                       -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>2 · Visual Ingredients with Emoji Icons</span></div>
+
+  <p style="padding:0 16px;font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5;">
+    Each ingredient now shows a <strong style="color:var(--cream);">visual emoji icon</strong> so beginners can easily 
+    identify what each ingredient looks like. Quantities are separated into a clear badge.
+  </p>
+
+  <!-- Emoji legend -->
+  <div class="legend">
+    <h4>🎨 Ingredient Emoji Map (auto-matched)</h4>
+    <div class="legend-grid">
+      <div class="legend-item"><span>🍗</span> Chicken</div>
+      <div class="legend-item"><span>🧄</span> Garlic</div>
+      <div class="legend-item"><span>🧅</span> Onion</div>
+      <div class="legend-item"><span>🥔</span> Potato</div>
+      <div class="legend-item"><span>🍅</span> Tomato</div>
+      <div class="legend-item"><span>🫚</span> Ginger</div>
+      <div class="legend-item"><span>🌶️</span> Chili</div>
+      <div class="legend-item"><span>🫗</span> Soy Sauce</div>
+      <div class="legend-item"><span>🍋</span> Calamansi</div>
+      <div class="legend-item"><span>🫒</span> Oil</div>
+      <div class="legend-item"><span>🍚</span> Rice</div>
+      <div class="legend-item"><span>🥚</span> Egg</div>
+      <div class="legend-item"><span>🧈</span> Butter</div>
+      <div class="legend-item"><span>🥕</span> Carrot</div>
+      <div class="legend-item"><span>🌿</span> Bay Leaf</div>
+      <div class="legend-item"><span>⚫</span> Peppercorn</div>
+      <div class="legend-item"><span>🍶</span> Vinegar</div>
+      <div class="legend-item"><span>💧</span> Water</div>
+      <div class="legend-item"><span>🧂</span> Salt</div>
+      <div class="legend-item"><span>🍬</span> Sugar</div>
+    </div>
+  </div>
+
+  <!-- Ingredient tab preview -->
+  <div style="padding:0 16px 16px;">
+    <div class="ingredient-progress-bar">
+      <span class="progress-text" id="ingProgressLabel">0/8 ready</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="ingProgressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="ingredientsList">
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="0">
+        <div class="ing-visual" style="--glow-color:rgba(255,180,50,0.15);">🍗</div>
+        <div class="ing-info">
+          <div class="ing-text">Chicken thighs, bone-in</div>
+          <div class="ing-subtext">Cut into serving pieces</div>
+        </div>
+        <div class="ing-qty">1 kg</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="1">
+        <div class="ing-visual" style="--glow-color:rgba(200,180,130,0.15);">🧄</div>
+        <div class="ing-info">
+          <div class="ing-text">Garlic cloves</div>
+          <div class="ing-subtext">Crushed & peeled</div>
+        </div>
+        <div class="ing-qty">8 cloves</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="2">
+        <div class="ing-visual" style="--glow-color:rgba(180,140,200,0.15);">🧅</div>
+        <div class="ing-info">
+          <div class="ing-text">White onion</div>
+          <div class="ing-subtext">Sliced into rings</div>
+        </div>
+        <div class="ing-qty">1 large</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="3">
+        <div class="ing-visual" style="--glow-color:rgba(139,90,43,0.2);">🫗</div>
+        <div class="ing-info">
+          <div class="ing-text">Soy sauce</div>
+          <div class="ing-subtext">Regular or dark soy sauce</div>
+        </div>
+        <div class="ing-qty">⅓ cup</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="4">
+        <div class="ing-visual" style="--glow-color:rgba(200,200,100,0.15);">🍶</div>
+        <div class="ing-info">
+          <div class="ing-text">White vinegar</div>
+          <div class="ing-subtext">Cane or white distilled</div>
+        </div>
+        <div class="ing-qty">¼ cup</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="5">
+        <div class="ing-visual" style="--glow-color:rgba(34,197,94,0.15);">🌿</div>
+        <div class="ing-info">
+          <div class="ing-text">Bay leaves</div>
+          <div class="ing-subtext">Dried bay laurel leaves</div>
+        </div>
+        <div class="ing-qty">3 pcs</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="6">
+        <div class="ing-visual" style="--glow-color:rgba(50,50,50,0.2);">⚫</div>
+        <div class="ing-info">
+          <div class="ing-text">Whole peppercorns</div>
+          <div class="ing-subtext">Black peppercorns, whole</div>
+        </div>
+        <div class="ing-qty">1 tsp</div>
+        <div class="ing-check">✓</div>
+      </div>
+
+      <div class="ingredient-card" onclick="toggleIngredient(this)" data-idx="7">
+        <div class="ing-visual" style="--glow-color:rgba(100,200,255,0.1);">💧</div>
+        <div class="ing-info">
+          <div class="ing-text">Water</div>
+          <div class="ing-subtext">Room temperature</div>
+        </div>
+        <div class="ing-qty">1 cup</div>
+        <div class="ing-check">✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   3. INTERACTIVE COOKING STEPS WITH ANIMATIONS                -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>3 · Animated Cooking Steps</span></div>
+
+  <p style="padding:0 16px;font-size:12px;color:var(--text-2);margin-bottom:12px;line-height:1.5;">
+    Each step now has a <strong style="color:var(--cream);">cooking micro-animation</strong> showing the action 
+    (cutting, sautéing, simmering, etc.), a <strong style="color:var(--fire);">timer badge</strong>, and optional 
+    <strong style="color:var(--fire);">pro tips</strong>.
+  </p>
+
+  <div style="padding:0 16px 16px;">
+    <div class="step-progress-bar">
+      <span class="step-progress-text" id="stepProgressLabel">0/6 done</span>
+      <div class="step-progress-track">
+        <div class="step-progress-fill" id="stepProgressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="stepsList">
+
+      <!-- Step 1: Prep / Cutting -->
+      <div class="step-card active-step" onclick="toggleStep(this,0)" data-idx="0">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">Prep the Ingredients</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Crush garlic cloves. Slice onion into rings. Cut chicken into serving pieces. Pat dry with paper towels.</p>
+        </div>
+        <!-- 🔪 Cutting Animation -->
+        <div class="step-animation">
+          <span class="knife-anim">🔪</span>
+          <span class="veg-slice">🧄</span>
+          <span class="veg-slice">🧅</span>
+          <span class="veg-slice">🍗</span>
+        </div>
+        <div class="step-tip"><strong>💡 Tip:</strong> Crushing garlic (not mincing) releases more flavor and holds up better during braising.</div>
+      </div>
+
+      <!-- Step 2: Sear / Sauté -->
+      <div class="step-card" onclick="toggleStep(this,1)" data-idx="1">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">Sear the Chicken</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Heat oil in a pan over high heat. Sear chicken pieces skin-side down until golden brown, about 3 minutes per side.</p>
+        </div>
+        <!-- 🍳 Sizzle Animation -->
+        <div class="step-animation" style="position:relative;">
+          <span class="pan-anim">🍳</span>
+          <span class="steam" style="top:4px;">💨</span>
+          <span class="steam" style="top:2px;">💨</span>
+          <span class="steam" style="top:6px;">💨</span>
+        </div>
+        <div class="step-timer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6 min
+        </div>
+        <div class="step-tip"><strong>💡 Tip:</strong> Don't move the chicken! Let it develop a golden crust before flipping.</div>
+      </div>
+
+      <!-- Step 3: Sauté aromatics -->
+      <div class="step-card" onclick="toggleStep(this,2)" data-idx="2">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">Sauté Garlic &amp; Onion</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Remove chicken, set aside. In the same pan, sauté crushed garlic and onion rings until fragrant and translucent.</p>
+        </div>
+        <!-- Cutting + Sizzle combined -->
+        <div class="step-animation">
+          <span class="knife-anim">🔪</span>
+          <span class="veg-slice">🧄</span>
+          <span class="veg-slice">🧅</span>
+          <span style="font-size:24px;margin-left:8px;">→</span>
+          <span class="pan-anim" style="font-size:26px;">🍳</span>
+        </div>
+        <div class="step-timer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          3 min
+        </div>
+      </div>
+
+      <!-- Step 4: Marinate / Combine -->
+      <div class="step-card" onclick="toggleStep(this,3)" data-idx="3">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">Combine the Braising Liquid</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Return chicken to pan. Pour in soy sauce, vinegar, and water. Add bay leaves and peppercorns. Do NOT stir yet.</p>
+        </div>
+        <!-- Marinating / Dripping animation -->
+        <div class="step-animation" style="position:relative;">
+          <span style="font-size:28px;">🍗</span>
+          <span class="drip" style="top:4px;">🫗</span>
+          <span class="drip" style="top:6px;">🫗</span>
+          <span class="drip" style="top:2px;">🍶</span>
+          <span style="font-size:20px;margin-left:8px;">🌿</span>
+          <span style="font-size:16px;">⚫</span>
+        </div>
+        <div class="step-tip"><strong>💡 Tip:</strong> Don't stir after adding vinegar — it can become bitter if agitated early. Let it come to a boil first.</div>
+      </div>
+
+      <!-- Step 5: Simmer / Boil -->
+      <div class="step-card" onclick="toggleStep(this,4)" data-idx="4">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div class="step-title">Simmer Until Tender</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Bring to a boil, then reduce heat to low. Cover and simmer for 30-35 minutes until chicken is fork-tender and sauce thickens.</p>
+        </div>
+        <!-- Boiling Animation -->
+        <div class="step-animation" style="position:relative;">
+          <span style="font-size:28px;">🫕</span>
+          <span class="boil-drop">💧</span>
+          <span class="boil-drop">💧</span>
+          <span class="boil-drop">💧</span>
+          <span class="boil-drop">💧</span>
+        </div>
+        <div class="step-timer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30-35 min
+        </div>
+      </div>
+
+      <!-- Step 6: Plate -->
+      <div class="step-card" onclick="toggleStep(this,5)" data-idx="5">
+        <div class="step-header">
+          <div class="step-num">6</div>
+          <div class="step-title">Plate &amp; Serve</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Transfer chicken to a plate. Spoon the rich adobo sauce over the top. Serve with steamed rice. Enjoy! 🍚</p>
+        </div>
+        <!-- Plating Animation -->
+        <div class="step-animation" style="position:relative;">
+          <span class="plate-anim">🍽️</span>
+          <span class="sparkle-star">✨</span>
+          <span class="sparkle-star">✨</span>
+          <span class="sparkle-star">✨</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Celebration (hidden until all complete) -->
+    <div class="celebration" id="celebrationArea" style="display:none;">
+      <div class="celebration-emoji">🍽️</div>
+      <h3>You cooked it! 🔥</h3>
+      <p>Great job finishing all 6 steps. Share your achievement!</p>
+      <div class="share-btns">
+        <button class="share-btn">📋 Copy</button>
+        <button class="share-btn">𝕏 Share</button>
+        <button class="share-btn">💬 WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   4. ADDITIONAL ANIMATION SHOWCASE                            -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>4 · Cooking Animation Library</span></div>
+
+  <p style="padding:0 16px;font-size:12px;color:var(--text-2);margin-bottom:16px;line-height:1.5;">
+    These are all the micro-animations available for different cooking actions. Each step auto-detects the 
+    action type and shows the matching animation.
+  </p>
+
+  <div style="padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+
+    <!-- Cutting -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🥔</span>
+        <span class="veg-slice">🥔</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Cutting Potato</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">dice · chop · slice</div>
+    </div>
+
+    <!-- Cutting Tomato -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🍅</span>
+        <span class="veg-slice">🍅</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Cutting Tomato</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">dice · chop · slice</div>
+    </div>
+
+    <!-- Cutting Garlic -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🧄</span>
+        <span class="veg-slice">🧄</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Mincing Garlic</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">mince · crush · chop</div>
+    </div>
+
+    <!-- Cutting Ginger -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🫚</span>
+        <span class="veg-slice">🫚</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Slicing Ginger</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">slice · julienne · grate</div>
+    </div>
+
+    <!-- Cutting Onion -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🧅</span>
+        <span class="veg-slice">🧅</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Dicing Onion</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">dice · ring · quarter</div>
+    </div>
+
+    <!-- Cutting Carrot -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🥕</span>
+        <span class="veg-slice">🥕</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Cutting Carrot</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">julienne · coin · baton</div>
+    </div>
+
+    <!-- Cutting Chili -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="knife-anim">🔪</span>
+        <span class="veg-slice">🌶️</span>
+        <span class="veg-slice">🌶️</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Slicing Chili</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">slice · deseed · mince</div>
+    </div>
+
+    <!-- Peeling -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;position:relative;">
+        <span class="peel-anim">🥔</span>
+        <span class="peel-bit" style="left:48%;top:30%;">🟤</span>
+        <span class="peel-bit">🟤</span>
+        <span class="peel-bit">🟤</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Peeling</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">peel · skin · pare</div>
+    </div>
+
+    <!-- Sautéing -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;position:relative;">
+        <span class="pan-anim">🍳</span>
+        <span class="steam" style="top:4px;">💨</span>
+        <span class="steam" style="top:2px;">💨</span>
+        <span class="steam" style="top:6px;">💨</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Sautéing</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">fry · sauté · sear</div>
+    </div>
+
+    <!-- Simmering -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;position:relative;">
+        <span style="font-size:28px;">🫕</span>
+        <span class="boil-drop">💧</span>
+        <span class="boil-drop">💧</span>
+        <span class="boil-drop">💧</span>
+        <span class="boil-drop">💧</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Simmering</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">simmer · boil · braise</div>
+    </div>
+
+    <!-- Stirring -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;">
+        <span class="stir-anim">🥄</span>
+        <span class="bubble">○</span>
+        <span class="bubble">○</span>
+        <span class="bubble">○</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Stirring</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">stir · mix · fold</div>
+    </div>
+
+    <!-- Plating -->
+    <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">
+      <div class="step-animation" style="margin:0 0 8px;height:56px;border:none;background:none;position:relative;">
+        <span class="plate-anim">🍽️</span>
+        <span class="sparkle-star">✨</span>
+        <span class="sparkle-star">✨</span>
+        <span class="sparkle-star">✨</span>
+      </div>
+      <div style="font-size:11px;color:var(--cream);font-weight:600;">Plating</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">plate · serve · garnish</div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   5. BEFORE / AFTER INGREDIENT COMPARISON                     -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>5 · Ingredient Card — Before vs After</span></div>
+
+  <div class="comparison" style="grid-template-columns:1fr;">
+    <div class="compare-card before" style="margin-bottom:0;">
+      <div class="compare-label">Before — Text only</div>
+      <div style="padding:8px 0;">
+        <button style="all:unset;width:100%;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;cursor:pointer;color:var(--cream);">
+          <span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>
+          <span style="font-size:14px;">1 kg chicken thighs, bone-in, cut into serving pieces</span>
+        </button>
+        <button style="all:unset;width:100%;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;cursor:pointer;color:var(--cream);">
+          <span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;"></span>
+          <span style="font-size:14px;">8 cloves garlic, crushed</span>
+        </button>
+      </div>
+      <p style="font-size:10px;color:var(--muted);margin-top:4px;">❌ Beginners may not know what garlic cloves look like or how much 1kg of chicken is.</p>
+    </div>
+  </div>
+  <div class="comparison" style="grid-template-columns:1fr;margin-top:-4px;">
+    <div class="compare-card after">
+      <div class="compare-label">After — Visual + Structured ✨</div>
+      <div style="padding:4px 0;">
+        <div class="ingredient-card" style="margin-bottom:6px;cursor:default;border:1px solid var(--border);">
+          <div class="ing-visual" style="--glow-color:rgba(255,180,50,0.15);">🍗</div>
+          <div class="ing-info">
+            <div class="ing-text">Chicken thighs, bone-in</div>
+            <div class="ing-subtext">Cut into serving pieces</div>
+          </div>
+          <div class="ing-qty">1 kg</div>
+          <div class="ing-check">✓</div>
+        </div>
+        <div class="ingredient-card" style="margin-bottom:0;cursor:default;border:1px solid var(--border);">
+          <div class="ing-visual" style="--glow-color:rgba(200,180,130,0.15);">🧄</div>
+          <div class="ing-info">
+            <div class="ing-text">Garlic cloves</div>
+            <div class="ing-subtext">Crushed &amp; peeled</div>
+          </div>
+          <div class="ing-qty">8 cloves</div>
+          <div class="ing-check">✓</div>
+        </div>
+      </div>
+      <p style="font-size:10px;color:var(--fire);margin-top:8px;">✅ Visual emoji, separated quantity badge, prep instruction subtitle — beginner-friendly!</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--   6. STEP CARD — BEFORE vs AFTER                              -->
+  <!-- ============================================================ -->
+  <div class="section-label"><span>6 · Step Card — Before vs After</span></div>
+
+  <div class="comparison" style="grid-template-columns:1fr;">
+    <div class="compare-card before">
+      <div class="compare-label">Before — Plain text step</div>
+      <div style="padding:8px 0;">
+        <button style="all:unset;width:100%;text-align:left;border-radius:12px;padding:12px;background:var(--bg-muted);border:1px solid var(--border);cursor:pointer;">
+          <div style="display:flex;align-items:start;gap:10px;">
+            <span style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);flex-shrink:0;">2</span>
+            <div>
+              <h4 style="font-size:13px;font-weight:600;color:var(--cream);">Sear the Chicken</h4>
+              <p style="font-size:12px;color:var(--text-2);margin-top:4px;">Heat oil in a pan over high heat. Sear chicken pieces skin-side down until golden brown.</p>
+            </div>
+          </div>
+        </button>
+      </div>
+      <p style="font-size:10px;color:var(--muted);margin-top:4px;">❌ No visual cue, no timer, no tips. Static and plain.</p>
+    </div>
+  </div>
+  <div class="comparison" style="grid-template-columns:1fr;margin-top:-4px;">
+    <div class="compare-card after">
+      <div class="compare-label">After — Animated + Interactive ✨</div>
+      <div class="step-card" style="cursor:default;border-color:rgba(249,115,22,0.3);box-shadow:0 0 0 1px rgba(249,115,22,0.1);">
+        <div class="step-header">
+          <div class="step-num" style="border-color:var(--fire);color:var(--fire);box-shadow:0 0 0 4px rgba(249,115,22,0.1);">2</div>
+          <div class="step-title">Sear the Chicken</div>
+        </div>
+        <div class="step-body-area">
+          <p class="step-body-text">Heat oil in a pan over high heat. Sear chicken pieces skin-side down until golden brown, about 3 minutes per side.</p>
+        </div>
+        <div class="step-animation" style="position:relative;">
+          <span class="pan-anim">🍳</span>
+          <span class="steam" style="top:4px;">💨</span>
+          <span class="steam" style="top:2px;">💨</span>
+          <span class="steam" style="top:6px;">💨</span>
+        </div>
+        <div class="step-timer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          6 min
+        </div>
+        <div class="step-tip"><strong>💡 Tip:</strong> Don't move the chicken! Let it develop a golden crust before flipping.</div>
+      </div>
+      <p style="font-size:10px;color:var(--fire);margin-top:8px;">✅ Cooking animation, timer badge, pro tip, active-step glow, hover lift effect!</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:32px 16px;border-top:1px solid var(--border);">
+    <p style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">
+      ForkIt Visual Enhancement Mockup · Review &amp; Approve
+    </p>
+    <p style="font-size:11px;color:var(--fire);margin-top:4px;">
+      ✨ Click ingredients &amp; steps above to test interactivity
+    </p>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!--   INTERACTIVE JS                                              -->
+<!-- ============================================================ -->
+<script>
+// --- Ingredient toggle ---
+const ingChecked = new Set();
+const totalIngredients = 8;
+
+function toggleIngredient(card) {
+  const idx = card.dataset.idx;
+  if (ingChecked.has(idx)) {
+    ingChecked.delete(idx);
+    card.classList.remove('checked');
+  } else {
+    ingChecked.add(idx);
+    card.classList.add('checked');
+    // Small bounce animation
+    card.style.transform = 'scale(0.97)';
+    setTimeout(() => card.style.transform = '', 150);
+  }
+  updateIngProgress();
+}
+
+function updateIngProgress() {
+  const count = ingChecked.size;
+  const pct = (count / totalIngredients) * 100;
+  document.getElementById('ingProgressLabel').textContent = `${count}/${totalIngredients} ready`;
+  document.getElementById('ingProgressFill').style.width = `${pct}%`;
+}
+
+// --- Step toggle ---
+const stepsCompleted = new Set();
+const totalSteps = 6;
+
+function toggleStep(card, idx) {
+  const idxStr = String(idx);
+  if (stepsCompleted.has(idxStr)) {
+    stepsCompleted.delete(idxStr);
+    card.classList.remove('completed');
+  } else {
+    stepsCompleted.add(idxStr);
+    card.classList.add('completed');
+    card.classList.remove('active-step');
+    // Animate the number to checkmark
+    const num = card.querySelector('.step-num');
+    num.textContent = '✓';
+    setTimeout(() => {
+      // Highlight next step
+      const nextCard = document.querySelector(`.step-card[data-idx="${idx+1}"]`);
+      if (nextCard && !stepsCompleted.has(String(idx+1))) {
+        nextCard.classList.add('active-step');
+      }
+    }, 300);
+  }
+  // If unchecking, restore number
+  if (!stepsCompleted.has(idxStr)) {
+    const num = card.querySelector('.step-num');
+    num.textContent = idx + 1;
+    // Remove active from all, recalc
+    document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active-step'));
+    // Find first incomplete
+    for (let i = 0; i < totalSteps; i++) {
+      if (!stepsCompleted.has(String(i))) {
+        document.querySelector(`.step-card[data-idx="${i}"]`)?.classList.add('active-step');
+        break;
+      }
+    }
+  }
+  updateStepProgress();
+}
+
+function updateStepProgress() {
+  const count = stepsCompleted.size;
+  const pct = (count / totalSteps) * 100;
+  document.getElementById('stepProgressLabel').textContent = `${count}/${totalSteps} done`;
+  document.getElementById('stepProgressFill').style.width = `${pct}%`;
+  
+  // Show celebration
+  if (count === totalSteps) {
+    document.getElementById('celebrationArea').style.display = 'block';
+  } else {
+    document.getElementById('celebrationArea').style.display = 'none';
+  }
+}
+
+// --- Save button toggle ---
+function toggleSaveBtn(btn) {
+  btn.classList.toggle('saved-active');
+}
+
+// --- Vote toggle ---
+function toggleVote(btn) {
+  const heart = btn.querySelector('.vote-heart');
+  const countEl = btn.querySelector('.vote-count');
+  if (btn.classList.contains('voted')) {
+    btn.classList.remove('voted');
+    heart.textContent = '🤍';
+    countEl.textContent = parseInt(countEl.textContent) - 1;
+  } else {
+    btn.classList.add('voted');
+    heart.textContent = '❤️';
+    countEl.textContent = parseInt(countEl.textContent) + 1;
+    heart.style.transform = 'scale(1.4)';
+    setTimeout(() => heart.style.transform = '', 300);
+  }
+}
+</script>
+
+</body>
+</html>
